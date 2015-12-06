@@ -22,6 +22,10 @@ class CarterServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/config/carter.php' => config_path('carter.php')
         ], 'config');
+
+        call_user_func([$this->app['config']->get('auth.model'), 'saving'], function ($user) {
+            $user->encryptAccessToken();
+        });
     }
 
     public function register()
