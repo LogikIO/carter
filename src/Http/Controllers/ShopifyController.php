@@ -74,7 +74,7 @@ class ShopifyController extends Controller
 
     public function registerStore()
     {
-        return view('carter.shopify.auth.register');
+        return view('shopify.auth.register');
     }
 
     public function register(RegistersStore $store)
@@ -104,6 +104,6 @@ class ShopifyController extends Controller
 
     public function dashboard()
     {
-        return view('carter.shopify.app.dashboard', ['user' => app('auth')->user()]);
+        return view('carter::shopify.app.dashboard', ['user' => app('auth')->user()]);
     }
 }

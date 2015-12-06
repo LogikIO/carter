@@ -13,6 +13,12 @@ class CarterServiceProvider extends ServiceProvider
             require __DIR__ . '/Http/routes.php';
         }
 
+        $this->loadViewsFrom(__DIR__ . '/views', 'carter');
+
+        $this->publishes([
+            __DIR__ . '/views' => base_path('resources/views/vendor/carter'),
+        ]);
+
         $this->publishes([
             __DIR__ . '/config/carter.php' => config_path('carter.php')
         ], 'config');
