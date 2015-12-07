@@ -20,7 +20,9 @@ class RedirectToLogin
     public function handle($request, Closure $next)
     {
         if ($this->auth->guest()) {
-            return $this->shopify->authorize(route($request->route()->getName()));
+            $redirect = $this->shopify->authorize(route('shopify.login'));
+
+            return view('carter::shopify.auth.login', ['redirect' => $redirect->getTargetUrl()]);
         }
 
         return $next($request);
