@@ -19,8 +19,10 @@ class VerifyChargeAccepted
 
     public function handle($request, Closure $next)
     {
-        if (! $this->store->hasAcceptedCharge($this->auth->user()->charge_id)) {
-            return view('carter.shopify.store.charge');
+        $user = $this->auth->user();
+
+        if (! $user->charge_id || ! $this->store->hasAcceptedCharge($user->charge_id)) {
+            return view('carter::shopify.auth.charge', ['redirect' => $this->store->charge()->getTargetUrl()]);
         }
 
         return $next($request);
