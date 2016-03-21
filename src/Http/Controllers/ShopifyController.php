@@ -8,6 +8,12 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Woolf\Carter\Http\Middleware\RedirectIfLoggedIn;
+use Woolf\Carter\Http\Middleware\RedirectToLogin;
+use Woolf\Carter\Http\Middleware\RequestHasShopDomain;
+use Woolf\Carter\Http\Middleware\VerifyChargeAccepted;
+use Woolf\Carter\Http\Middleware\VerifySignature;
+use Woolf\Carter\Http\Middleware\VerifyState;
 use Woolf\Carter\RegistersStore;
 use Woolf\Carter\ShopifyProvider;
 
@@ -18,35 +24,29 @@ class ShopifyController extends Controller
 
     public function __construct()
     {
-        $this->middleware(
-            'request.has-shop',
-            ['only' => ['install']]
-        );
+        $this->middleware(RequestHasShopDomain::class, [
+            'only' => ['install']
+        ]);
 
-        $this->middleware(
-            'request.valid-state',
-            ['only' => ['register']]
-        );
+        $this->middleware(VerifyState::class, [
+            'only' => ['register']
+        ]);
 
-        $this->middleware(
-            'request.valid-signature',
-            ['only' => ['register', 'login']]
-        );
+        $this->middleware(VerifySignature::class, [
+            'only' => ['register', 'login']
+        ]);
 
-        $this->middleware(
-            'redirect.if-logged-in',
-            ['only' => ['install', 'registerStore', 'register', 'login']]
-        );
+        $this->middleware(RedirectIfLoggedIn::class, [
+            'only' => ['install', 'registerStore', 'register', 'login']
+        ]);
 
-        $this->middleware(
-            'redirect.to-login',
-            ['only' => ['dashboard']]
-        );
+        $this->middleware(RedirectToLogin::class, [
+            'only' => ['dashboard']
+        ]);
 
-        $this->middleware(
-            'verify.charge-accepted',
-            ['only' => ['dashboard']]
-        );
+        $this->middleware(VerifyChargeAccepted::class, [
+            'only' => ['dashboard']
+        ]);
     }
 
     public function install(Request $request, ShopifyProvider $shopify)
@@ -70,8 +70,11 @@ class ShopifyController extends Controller
         return $store->register()->charge();
     }
 
-    public function activate(RegistersStore $store, ShopifyProvider $shopify, Request $request)
-    {
+    public function activate(
+        RegistersStore $store,
+        ShopifyProvider $shopify,
+        Request $request
+    ) {
         $charge = $request->get('charge_id');
 
         if ($store->hasAcceptedCharge($charge)) {
