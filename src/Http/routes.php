@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['namespace' => 'Woolf\Carter\Http\Controller'], function ($router) {
+Route::group(['namespace' => 'Woolf\Carter\Http\Controllers'], function ($router) {
 
     Route::get('signup', 'ShopifyController@registerStore')
         ->name('shopify.signup');
