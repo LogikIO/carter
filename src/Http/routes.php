@@ -1,41 +1,26 @@
 <?php
 
-function shopify_controller_action($action)
-{
-    return '\Woolf\Carter\Http\Controllers\ShopifyController@' . $action;
-}
+Route::group(['namespace' => 'Woolf\Carter\Http\Controller'], function ($router) {
 
-Route::get('signup', [
-    'as'   => 'shopify.form.signup',
-    'uses' => shopify_controller_action('registerStore')
-]);
+    Route::get('signup', 'ShopifyController@registerStore')
+        ->name('shopify.signup');
 
-Route::get('install', [
-    'as'   => 'shopify.install',
-    'uses' => shopify_controller_action('install')
-]);
+    Route::get('install', 'ShopifyController@install')
+        ->name('shopify.install');
 
-Route::post('install', [
-    'as'   => 'shopify.action.install',
-    'uses' => shopify_controller_action('install')
-]);
+    Route::post('install', 'ShopifyController@install')
+        ->name('shopify.action.install');
 
-Route::get('register', [
-    'as'   => 'shopify.register',
-    'uses' => shopify_controller_action('register')
-]);
+    Route::get('register', 'ShopifyController@register')
+        ->name('shopify.register');
 
-Route::get('activate', [
-    'as'   => 'shopify.activate.plan',
-    'uses' => shopify_controller_action('activate')
-]);
+    Route::get('activate', 'ShopifyController@activate')
+        ->name('shopify.activate');
 
-Route::get('login', [
-    'as'   => 'shopify.login',
-    'uses' => shopify_controller_action('login')
-]);
+    Route::get('login', 'ShopifyController@login')
+        ->name('shopify.login');
 
-Route::get('dashboard', [
-    'as'   => 'shopify.dashboard',
-    'uses' => shopify_controller_action('dashboard')
-]);
+    Route::get('dashboard', 'ShopifyController@dashboard')
+        ->name('shopify.dashboard');
+
+});
