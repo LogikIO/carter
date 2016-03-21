@@ -18,47 +18,35 @@ class ShopifyController extends Controller
 
     public function __construct()
     {
-        $this->middleware('request.has.shop', ['only' => $this->checkRequestHasShop()]);
+        $this->middleware(
+            'request.has-shop',
+            ['only' => ['install']]
+        );
 
-        $this->middleware('request.valid.state', ['only' => $this->checkRequestState()]);
+        $this->middleware(
+            'request.valid-state',
+            ['only' => ['register']]
+        );
 
-        $this->middleware('request.valid.signature', ['only' => $this->checkRequestSignature()]);
+        $this->middleware(
+            'request.valid-signature',
+            ['only' => ['register', 'login']]
+        );
 
-        $this->middleware('redirect.if-logged-in', ['only' => $this->checkNotLoggedIn()]);
+        $this->middleware(
+            'redirect.if-logged-in',
+            ['only' => ['install', 'registerStore', 'register', 'login']]
+        );
 
-        $this->middleware('redirect.to.login', ['only' => $this->checkLoggedIn()]);
+        $this->middleware(
+            'redirect.to-login',
+            ['only' => ['dashboard']]
+        );
 
-        $this->middleware('verify.charge.accepted', ['only' => $this->checkChargeAccepted()]);
-    }
-
-    protected function checkRequestHasShop()
-    {
-        return ['install'];
-    }
-
-    protected function checkRequestState()
-    {
-        return ['register'];
-    }
-
-    protected function checkRequestSignature()
-    {
-        return ['register', 'login'];
-    }
-
-    protected function checkNotLoggedIn()
-    {
-        return ['install', 'registerStore', 'register', 'login'];
-    }
-
-    protected function checkLoggedIn()
-    {
-        return ['dashboard'];
-    }
-
-    protected function checkChargeAccepted()
-    {
-        return ['dashboard'];
+        $this->middleware(
+            'verify.charge-accepted',
+            ['only' => ['dashboard']]
+        );
     }
 
     public function install(Request $request, ShopifyProvider $shopify)
