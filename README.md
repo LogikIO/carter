@@ -22,6 +22,12 @@ $ composer require woolf/carter
     
 ```
 
+### Create and run database migration.
+
+```
+$ php artisan carter:table && php artisan migrate
+```
+
 ### Add StoreOwner trait to User model - app/User.php
 
 ```php
