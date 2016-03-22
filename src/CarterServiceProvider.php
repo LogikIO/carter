@@ -35,9 +35,4 @@ class CarterServiceProvider extends ServiceProvider
 
         $this->commands('command.carter.table');
     }
-
-    protected function usersModel()
-    {
-        return $this->app['config']->get('auth.providers.users.model');
-    }
 }
