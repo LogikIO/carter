@@ -88,10 +88,11 @@ SHOPIFY_SECRET=1234567890abcdefghijklmnopqrstuv
 $ php artisan vendor:publish
 ```
 
+In Shopify App settings, add Application URL `https://your-site.com/dashboard` and Redirection URL `http://your-site.com/register`
 
 Visit `http://your-site.com/install?shop=your-test-store.myshopify.com` to install app in Shopify store.
 
-Can also create a view `shopify/auth/register.blade.php` with a form containing a text field with name `shop` to submit a post request to `route('shopify.install')`. `http://your-site.com/register` to view the form.
+Can also create a view `shopify/auth/register.blade.php` with a form containing a text field with name `shop` to submit a post request to `route('shopify.install')`. `http://your-site.com/signup` to view the form.
 
 Add your own views by extending `carter::shopify.embedded` and `carter::shopify.escape_iframe`
 
