@@ -5,11 +5,8 @@ Route::group(['namespace' => 'Woolf\Carter\Http\Controllers', 'middleware' => 'w
     Route::get('signup', 'ShopifyController@registerStore')
         ->name('shopify.signup');
 
-    Route::get('install', 'ShopifyController@install')
+    Route::match(['get', 'post'], 'install', 'ShopifyController@install')
         ->name('shopify.install');
-
-    Route::post('install', 'ShopifyController@install')
-        ->name('shopify.action.install');
 
     Route::get('register', 'ShopifyController@register')
         ->name('shopify.register');
