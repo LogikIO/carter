@@ -7,7 +7,7 @@ Shopify app jumpstart for Laravel
 $ composer require woolf/carter
 ```
 
-Autoload Carter Service Provider - config/app.php
+### Autoload Carter Service Provider - config/app.php
 
 ```php
 <?php
@@ -22,7 +22,7 @@ Autoload Carter Service Provider - config/app.php
     
 ```
 
-Add StoreOwner trait to User model - app/User.php
+### Add StoreOwner trait to User model - app/User.php
 
 ```php
 <?php
@@ -40,7 +40,7 @@ class User extends Authenticatable
 
 ```
 
-Update `$fillable` and `$hidden` fields in User model - app/User.php
+### Update `$fillable` and `$hidden` fields in User model - app/User.php
 
 ```php
 <?php
@@ -64,14 +64,14 @@ class User extends Authenticatable
 
 ```
 
-Add your Shopify app API key and secret to `.env`
+### Add your Shopify app API key and secret to `.env`
 
 ```
 SHOPIFY_KEY=1234567890abcdefghijklmnopqrstuv
 SHOPIFY_SECRET=1234567890abcdefghijklmnopqrstuv
 ```
 
-Publish carter configuration and views.
+### Publish carter configuration and views.
 
 - config/carter.php
 - resources/views/vendor/carter
@@ -84,6 +84,12 @@ $ php artisan vendor:publish
 Visit `http://your-site.com/install?shop=your-test-store.myshopify.com` to install app in Shopify store.
 
 Can also create a view `shopify/auth/register.blade.php` with a form containing a text field with name `shop` to submit a post request to `route('shopify.install')`. `http://your-site.com/register` view the form.
+
+Add your own views by extending `carter::shopify.embedded` and `carter::shopify.escape_iframe`
+
+https://docs.shopify.com/api/sdks/embedded-app-sdk
+
+
 
 More to come.
 
