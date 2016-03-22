@@ -41,7 +41,7 @@ class RegisterStore
 
     protected function user()
     {
-        return $this->auth()->user() ?: $this->app->make($this->app['config']->get('auth.model'));
+        return $this->auth()->user() ?: $this->app->make($this->app['config']->get('auth.providers.users.model'));
     }
 
     protected function auth()
