@@ -85,7 +85,7 @@ $ php artisan vendor:publish
 
 Visit `http://your-site.com/install?shop=your-test-store.myshopify.com` to install app in Shopify store.
 
-Can also create a view `shopify/auth/register.blade.php` with a form containing a text field with name `shop` to submit a post request to `route('shopify.install')`. `http://your-site.com/register` view the form.
+Can also create a view `shopify/auth/register.blade.php` with a form containing a text field with name `shop` to submit a post request to `route('shopify.install')`. `http://your-site.com/register` to view the form.
 
 Add your own views by extending `carter::shopify.embedded` and `carter::shopify.escape_iframe`
 
