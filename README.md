@@ -66,6 +66,8 @@ class User extends Authenticatable
 
 ### Add your Shopify app API key and secret to `.env`
 
+https://docs.shopify.com/api/authentication/oauth#get-the-client-redentials
+
 ```
 SHOPIFY_KEY=1234567890abcdefghijklmnopqrstuv
 SHOPIFY_SECRET=1234567890abcdefghijklmnopqrstuv
