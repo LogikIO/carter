@@ -5,7 +5,7 @@ namespace Woolf\Carter;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Str;
 
-class RegistersStore
+class RegisterStore
 {
     CONST HTTP_OK = 200;
 
