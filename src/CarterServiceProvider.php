@@ -2,6 +2,7 @@
 
 namespace Woolf\Carter;
 
+use Crypt;
 use Illuminate\Support\ServiceProvider;
 
 class CarterServiceProvider extends ServiceProvider
@@ -22,10 +23,6 @@ class CarterServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/config/carter.php' => config_path('carter.php')
         ], 'config');
-
-        call_user_func([$this->app['config']->get('auth.providers.users.model'), 'saving'], function ($user) {
-            $user->encryptAccessToken();
-        });
     }
 
     public function register()
@@ -37,5 +34,10 @@ class CarterServiceProvider extends ServiceProvider
         });
 
         $this->commands('command.carter.table');
+    }
+
+    protected function usersModel()
+    {
+        return $this->app['config']->get('auth.providers.users.model');
     }
 }

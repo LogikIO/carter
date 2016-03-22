@@ -22,9 +22,9 @@ return [
          *  https://docs.shopify.com/api/recurringapplicationcharge#create
          */
         'plan' => [
-            'name'       => '',
-            'price'      => 0.00,
-            'return_url' => '',
+            'name'       => 'Test Plan',
+            'price'      => 0.99,
+            'return_url' => env('APP_URL', 'http://localhost').'/activate',
             'trial_day'  => 0,
             'test'       => true
         ]

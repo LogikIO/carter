@@ -2,21 +2,19 @@
 
 namespace Woolf\Carter;
 
-use \Crypt;
+use Crypt;
 
 trait StoreOwner
 {
-    public function encryptAccessToken()
+
+    public function setAccessTokenAttribute($value)
     {
-        $this->access_token = Crypt::encrypt($this->access_token);
+        $this->attributes['access_token'] = Crypt::encrypt($value);
     }
 
-    protected function decryptAccessToken(array $attributes)
+    public function getAccessTokenAttribute()
     {
-        if (isset($attributes['access_token'])) {
-            $attributes['access_token'] = Crypt::decrypt($attributes['access_token']);
-        }
-
-        return $attributes;
+        return Crypt::decrypt($this->attributes['access_token']);
     }
+
 }
