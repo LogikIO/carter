@@ -2,6 +2,7 @@
 
 namespace Woolf\Carter\Http\Controllers;
 
+use Auth;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -80,17 +81,17 @@ class ShopifyController extends Controller
         return $shopify->apps();
     }
 
-    public function login(Request $request, Guard $auth)
+    public function login(Request $request)
     {
-        $user = app('carter.auth.model')->whereDomain($request->get('shop'))->first();
-
-        $auth->login($user->fresh());
+        Auth::login(
+            app('carter.auth.model')->whereDomain($request->get('shop'))->first()
+        );
 
         return redirect()->route('shopify.dashboard');
     }
 
     public function dashboard()
     {
-        return view('shopify.app.dashboard', ['user' => app('auth')->user()]);
+        return view('shopify.app.dashboard', ['user' => Auth::user()]);
     }
 }
