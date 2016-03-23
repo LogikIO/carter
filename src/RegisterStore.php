@@ -29,7 +29,7 @@ class RegisterStore
             'access_token' => $store['access_token']
         ]);
 
-        $this->login($user->fresh());
+        $this->login($user);
 
         return $this;
     }
@@ -41,7 +41,7 @@ class RegisterStore
 
     protected function user()
     {
-        return $this->auth()->user() ?: $this->app->make($this->app['config']->get('auth.providers.users.model'));
+        return $this->auth()->user() ?: $this->app->make('carter.auth.model');
     }
 
     protected function auth()
