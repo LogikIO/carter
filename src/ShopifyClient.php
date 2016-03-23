@@ -8,27 +8,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class ShopifyClient
 {
 
-    private $domain;
+    protected $domain;
 
     public function domain($domain)
     {
         $this->domain = $domain;
-    }
-
-    public function endpoint($path, array $query = [])
-    {
-        $url = 'https://' . $this->domain . $path;
-
-        if (! empty($query)) {
-            $url .= '?' . http_build_query($query, '', '&');
-        }
-
-        return $url;
-    }
-
-    public function redirect($url)
-    {
-        return new RedirectResponse($url);
     }
 
     public function get($url, array $options = [])
@@ -36,13 +20,29 @@ class ShopifyClient
         return $this->client()->get($url, $options);
     }
 
+    public function post($url, array $options = [])
+    {
+        return $this->client()->post($url, $options);
+    }
+
+    public function endpoint($path, array $query = [])
+    {
+        $url = 'https://'.$this->domain.$path;
+
+        if (! empty($query)) {
+            $url .= '?'.http_build_query($query, '', '&');
+        }
+
+        return $url;
+    }
+
     protected function client()
     {
         return new Client();
     }
 
-    public function post($url, array $options = [])
+    public function redirect($url)
     {
-        return $this->client()->post($url, $options);
+        return new RedirectResponse($url);
     }
 }
