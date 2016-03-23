@@ -8,16 +8,21 @@ use Illuminate\Support\Str;
 class ShopifyProvider
 {
 
-    private $client;
-    private $app;
-    private $token;
+    protected $client;
+
+    protected $app;
+
+    protected $token;
 
     public function __construct(Application $app, ShopifyClient $client)
     {
         $this->app = $app;
+
         $this->client = $client;
 
-        $this->client->domain(($user = $this->user()) ? $user->domain : $this->request()->input('shop'));
+        $this->client->domain(
+            $this->user() ? $this->user()->domain : $this->request()->input('shop')
+        );
     }
 
     protected function user()
@@ -64,7 +69,7 @@ class ShopifyProvider
 
     protected function config($key)
     {
-        return $this->app['config']->get('carter.shopify.' . $key);
+        return $this->app['config']->get('carter.shopify.'.$key);
     }
 
     protected function formattedScopes()
