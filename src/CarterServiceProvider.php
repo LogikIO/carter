@@ -23,10 +23,15 @@ class CarterServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/config/carter.php' => config_path('carter.php')
         ], 'config');
+
     }
 
     public function register()
     {
+        $this->app->bind('carter.auth.model', function ($app) {
+            return $app->make($app->make('config')->get('auth.providers.users.model'));
+        });
+
         $this->mergeConfigFrom(__DIR__.'/config/carter.php', 'carter');
 
         $this->app->singleton('command.carter.table', function () {

@@ -82,7 +82,7 @@ class ShopifyController extends Controller
 
     public function login(Request $request, Guard $auth)
     {
-        $user = app(app('config')->get('auth.model'))->whereDomain($request->get('shop'))->first();
+        $user = app('carter.auth.model')->whereDomain($request->get('shop'))->first();
 
         $auth->login($user->fresh());
 
