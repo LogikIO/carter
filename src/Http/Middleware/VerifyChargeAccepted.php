@@ -8,12 +8,15 @@ use Woolf\Carter\RegisterStore;
 
 class VerifyChargeAccepted
 {
-    private $store;
-    private $auth;
+
+    protected $store;
+
+    protected $auth;
 
     public function __construct(RegisterStore $store, Guard $auth)
     {
         $this->store = $store;
+
         $this->auth = $auth;
     }
 
@@ -22,7 +25,9 @@ class VerifyChargeAccepted
         $user = $this->auth->user();
 
         if (! $user->charge_id || ! $this->store->hasAcceptedCharge($user->charge_id)) {
-            return view('carter::shopify.auth.charge', ['redirect' => $this->store->charge()->getTargetUrl()]);
+            return view('carter::shopify.auth.charge', [
+                'redirect' => $this->store->charge()->getTargetUrl()
+            ]);
         }
 
         return $next($request);

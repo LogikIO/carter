@@ -9,8 +9,9 @@ use Illuminate\Support\Collection;
 class VerifySignature
 {
 
-    private $config;
-    private $request;
+    protected $config;
+
+    protected $request;
 
     public function __construct(Repository $config)
     {
