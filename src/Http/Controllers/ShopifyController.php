@@ -3,7 +3,7 @@
 namespace Woolf\Carter\Http\Controllers;
 
 use Auth;
-use Illuminate\Contracts\Auth\Guard;
+use Config;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -63,7 +63,7 @@ class ShopifyController extends Controller
 
     public function registerStore()
     {
-        return view('shopify.auth.register');
+        return view(Config::get('carter.shopify.views.register_form'));
     }
 
     public function register(RegisterStore $store)
@@ -92,6 +92,6 @@ class ShopifyController extends Controller
 
     public function dashboard()
     {
-        return view('shopify.app.dashboard', ['user' => Auth::user()]);
+        return view(Config::get('carter.shopify.views.dashboard'), ['user' => Auth::user()]);
     }
 }

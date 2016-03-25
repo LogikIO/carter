@@ -14,8 +14,14 @@ return [
          *  https://docs.shopify.com/api/authentication/oauth#scopes
          */
         'scopes' => [
-            'read_content', 'read_themes', 'read_products', 'read_customers',
-            'read_orders', 'read_script_tags', 'read_fulfillments', 'read_shipping'
+            'read_content',
+            'read_themes',
+            'read_products',
+            'read_customers',
+            'read_orders',
+            'read_script_tags',
+            'read_fulfillments',
+            'read_shipping'
         ],
 
         /*
@@ -27,7 +33,13 @@ return [
             'return_url' => env('APP_URL', 'http://localhost').'/activate',
             'trial_day'  => 0,
             'test'       => true
-        ]
+        ],
+
+        'views' => [
+            'register_form' => 'shopify.auth.register',
+            'dashboard'     => 'shopify.app.dashboard',
+        ],
+
     ]
 
 ];
