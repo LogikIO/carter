@@ -63,7 +63,9 @@ class ShopifyController extends Controller
 
     public function registerStore()
     {
-        return view(Config::get('carter.shopify.views.register_form'));
+        $registrationForm = Config::get('carter.shopify.views.register_form');
+
+        return view($registrationForm);
     }
 
     public function register(RegisterStore $store)
@@ -92,6 +94,8 @@ class ShopifyController extends Controller
 
     public function dashboard()
     {
-        return view(Config::get('carter.shopify.views.dashboard'), ['user' => Auth::user()]);
+        $dashboard = Config::get('carter.shopify.views.dashboard');
+
+        return view($dashboard, ['user' => Auth::user()]);
     }
 }
