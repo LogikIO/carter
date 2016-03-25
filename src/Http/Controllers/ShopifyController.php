@@ -16,7 +16,7 @@ use Woolf\Carter\Http\Middleware\VerifyChargeAccepted;
 use Woolf\Carter\Http\Middleware\VerifySignature;
 use Woolf\Carter\Http\Middleware\VerifyState;
 use Woolf\Carter\RegisterStore;
-use Woolf\Carter\ShopifyProvider;
+use Woolf\Carter\ShopifyGateway;
 
 class ShopifyController extends Controller
 {
@@ -50,7 +50,7 @@ class ShopifyController extends Controller
         ]);
     }
 
-    public function install(Request $request, ShopifyProvider $shopify)
+    public function install(Request $request, ShopifyGateway $shopify)
     {
         $this->validate(
             $request,
@@ -73,7 +73,7 @@ class ShopifyController extends Controller
         return $store->register()->charge();
     }
 
-    public function activate(RegisterStore $store, ShopifyProvider $shopify, Request $request) {
+    public function activate(RegisterStore $store, ShopifyGateway $shopify, Request $request) {
         $charge = $request->get('charge_id');
 
         if ($store->hasAcceptedCharge($charge)) {

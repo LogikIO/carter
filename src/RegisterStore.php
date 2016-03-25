@@ -36,7 +36,7 @@ class RegisterStore
 
     protected function shopify()
     {
-        return $this->app->make(ShopifyProvider::class);
+        return $this->app->make(ShopifyGateway::class);
     }
 
     protected function user()
