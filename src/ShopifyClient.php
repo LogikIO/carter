@@ -18,7 +18,7 @@ class ShopifyClient
 
     public function endpoint($path, array $query = [])
     {
-        $url = 'https://'.$this->domain.$path;
+        $url = 'https://'.$this->domain().$path;
 
         if (! empty($query)) {
             $url .= '?'.http_build_query($query, '', '&');
