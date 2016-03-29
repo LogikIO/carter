@@ -113,8 +113,8 @@ class ShopifyGateway
     {
         $parameters = ['form_params' => ['recurring_application_charge' => $chargeId]] + $this->tokenHeader();
 
-        $response = $this->client->post(
-            $this->client->endpoint("/admin/recurring_application_charges/{$chargeId}/activate.json"), $parameters
+        $response = $this->post(
+            $this->endpoint("/admin/recurring_application_charges/{$chargeId}/activate.json"), $parameters
         );
 
         return $response->getStatusCode();
