@@ -2,18 +2,107 @@
 
 namespace Woolf\Carter;
 
+use GuzzleHttp\Client;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ShopifyGateway
 {
 
-    protected $client;
+    protected $app;
 
     protected $token;
 
-    public function __construct(ShopifyClient $client)
+    public function __construct(Application $app)
     {
-        $this->client = $client;
+        $this->app = $app;
+    }
+
+    protected function client()
+    {
+        return new Client();
+    }
+
+    public function redirect($url)
+    {
+        return new RedirectResponse($url);
+    }
+
+    public function getState()
+    {
+        return $this->request()->session()->get('state');
+    }
+
+    public function setState($value)
+    {
+        $this->request()->session()->set('state', $value);
+    }
+
+    protected function config($key)
+    {
+        return $this->app['config']->get('carter.shopify.'.$key);
+    }
+
+    protected function request()
+    {
+        return $this->app['request'];
+    }
+
+    public function endpoint($path, array $query = [])
+    {
+        $url = 'https://'.$this->domain().$path;
+
+        if (! empty($query)) {
+            $url .= '?'.http_build_query($query, '', '&');
+        }
+
+        return $url;
+    }
+
+    public function get($url, array $options = [])
+    {
+        return $this->client()->get($url, $options);
+    }
+
+    public function post($url, array $options = [])
+    {
+        return $this->client()->post($url, $options);
+    }
+
+    public function clientId()
+    {
+        return $this->config('client_id');
+    }
+
+    public function clientSecret()
+    {
+        return $this->config('client_secret');
+    }
+
+    public function code()
+    {
+        return $this->request()->input('code');
+    }
+
+    public function domain()
+    {
+        return ($user = $this->app['auth']->user()) ? $user->domain : $this->request()->input('shop');
+    }
+
+    public function plan()
+    {
+        return $this->config('plan');
+    }
+
+    public function scopes()
+    {
+        return $this->config('scopes');
+    }
+
+    public function token()
+    {
+        return ($user = $this->app['auth']->user()) ? $user->access_token : null;
     }
 
     /**
@@ -36,7 +125,7 @@ class ShopifyGateway
      */
     public function apps()
     {
-        return $this->client->redirect($this->client->endpoint('/admin/apps'));
+        return $this->redirect($this->endpoint('/admin/apps'));
     }
 
     /**
@@ -45,16 +134,16 @@ class ShopifyGateway
      */
     public function authorize($returnUrl)
     {
-        $this->client->setState(Str::random(40));
+        $this->setState(Str::random(40));
 
-        $endpoint = $this->client->endpoint('/admin/oauth/authorize', [
-            'client_id'    => $this->client->clientId(),
+        $endpoint = $this->endpoint('/admin/oauth/authorize', [
+            'client_id'    => $this->clientId(),
             'redirect_uri' => $returnUrl,
-            'scope'        => implode(',', $this->client->scopes()),
-            'state'        => $this->client->getState()
+            'scope'        => implode(',', $this->scopes()),
+            'state'        => $this->getState()
         ]);
 
-        return $this->client->redirect($endpoint);
+        return $this->redirect($endpoint);
     }
 
     /**
@@ -62,15 +151,15 @@ class ShopifyGateway
      */
     public function charge()
     {
-        $parameters = ['form_params' => ['recurring_application_charge' => $this->client->plan()]] + $this->tokenHeader();
+        $parameters = ['form_params' => ['recurring_application_charge' => $this->plan()]] + $this->tokenHeader();
 
-        $response = $this->client->post(
-            $this->client->endpoint('/admin/recurring_application_charges.json'), $parameters
+        $response = $this->post(
+            $this->endpoint('/admin/recurring_application_charges.json'), $parameters
         );
 
         $charge = $this->parseResponse($response->getBody(), 'recurring_application_charge');
 
-        return $this->client->redirect($charge['confirmation_url']);
+        return $this->redirect($charge['confirmation_url']);
     }
 
     /**
@@ -79,8 +168,8 @@ class ShopifyGateway
      */
     public function getCharge($id)
     {
-        $response = $this->client->get(
-            $this->client->endpoint("/admin/recurring_application_charges/{$id}.json"), $this->tokenHeader()
+        $response = $this->get(
+            $this->endpoint("/admin/recurring_application_charges/{$id}.json"), $this->tokenHeader()
         );
 
         return $this->parseResponse($response->getBody(), 'recurring_application_charge');
@@ -91,12 +180,12 @@ class ShopifyGateway
      */
     public function requestAccessToken()
     {
-        $response = $this->client->post($this->client->endpoint('/admin/oauth/access_token'), [
+        $response = $this->post($this->endpoint('/admin/oauth/access_token'), [
             'headers'     => ['Accept' => 'application/json'],
             'form_params' => [
-                'client_id'     => $this->client->clientId(),
-                'client_secret' => $this->client->clientSecret(),
-                'code'          => $this->client->code(),
+                'client_id'     => $this->clientId(),
+                'client_secret' => $this->clientSecret(),
+                'code'          => $this->code(),
             ]
         ]);
 
@@ -108,7 +197,7 @@ class ShopifyGateway
      */
     public function store()
     {
-        $response = $this->client->get($this->client->endpoint('/admin/shop.json'), $this->tokenHeader());
+        $response = $this->get($this->endpoint('/admin/shop.json'), $this->tokenHeader());
 
         $store = $this->parseResponse($response->getBody(), 'shop');
 
@@ -118,7 +207,7 @@ class ShopifyGateway
     protected function accessToken()
     {
         if (is_null($this->token)) {
-            $this->token = $this->client->token() ?: $this->requestAccessToken();
+            $this->token = $this->token() ?: $this->requestAccessToken();
         }
 
         return $this->token;
