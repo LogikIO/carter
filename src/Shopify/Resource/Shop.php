@@ -13,6 +13,6 @@ class Shop extends Resource
 
         $url = $this->endpoint->build('admin/shop.json', $fields);
 
-        return $this->client()->get($url, $this->tokenHeader());
+        return $this->client->create()->get($url, $this->tokenHeader());
     }
 }

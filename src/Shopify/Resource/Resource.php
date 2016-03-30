@@ -2,6 +2,8 @@
 
 namespace Woolf\Carter\Shopify\Resource;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Woolf\Carter\Shopify\Client;
 use Woolf\Carter\Shopify\Endpoint;
 
 abstract class Resource
@@ -12,7 +14,7 @@ abstract class Resource
 
     protected $accessToken;
 
-    public function __construct(Endpoint $endpoint, $client, $accessToken = null)
+    public function __construct(Endpoint $endpoint, Client $client, $accessToken = null)
     {
         $this->endpoint = $endpoint;
 
@@ -21,9 +23,9 @@ abstract class Resource
         $this->accessToken = $accessToken;
     }
 
-    protected function client()
+    protected function redirect($url)
     {
-        return call_user_func($this->client);
+        return new RedirectResponse($url);
     }
 
     protected function tokenHeader()
