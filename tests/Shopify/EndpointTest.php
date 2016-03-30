@@ -26,7 +26,7 @@ class EndpointTest extends TestCase
         $endpoint = new Woolf\Carter\Shopify\Endpoint('foo.bar');
 
         $query = [
-            'baz' => 'qux',
+            'baz'  => 'qux',
             'this' => 'that'
         ];
 
