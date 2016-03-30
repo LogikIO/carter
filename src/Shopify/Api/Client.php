@@ -1,6 +1,6 @@
 <?php
 
-namespace Woolf\Carter\Shopify;
+namespace Woolf\Carter\Shopify\Api;
 
 use GuzzleHttp\Client as GuzzleClient;
 use Psr\Http\Message\ResponseInterface;

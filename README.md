@@ -28,7 +28,7 @@ $ composer require woolf/carter
 $ php artisan carter:table && php artisan migrate
 ```
 
-### Add ShopOwner trait to User model - app/User.php
+### Add StoreOwner trait to User model - app/User.php
 
 ```php
 <?php
@@ -38,7 +38,7 @@ $ php artisan carter:table && php artisan migrate
 class User extends Authenticatable
 {
 
-    use \Woolf\Carter\ShopOwner;
+    use \Woolf\Carter\StoreOwner;
     
     ...
     

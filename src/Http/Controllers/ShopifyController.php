@@ -15,7 +15,7 @@ use Woolf\Carter\Http\Middleware\RequestHasShopDomain;
 use Woolf\Carter\Http\Middleware\VerifyChargeAccepted;
 use Woolf\Carter\Http\Middleware\VerifySignature;
 use Woolf\Carter\Http\Middleware\VerifyState;
-use Woolf\Carter\RegisterStore;
+use Woolf\Carter\RegisterShop;
 use Woolf\Carter\Shopify\Shopify;
 
 class ShopifyController extends Controller
@@ -58,7 +58,7 @@ class ShopifyController extends Controller
             ['shop.unique' => 'Store has already been registered']
         );
 
-        return $shopify->authorize(route('shopify.register'));
+        return $shopify->oauth()->authorize(route('shopify.register'));
     }
 
     public function registerStore()
@@ -68,19 +68,19 @@ class ShopifyController extends Controller
         return view($registrationForm);
     }
 
-    public function register(RegisterStore $store)
+    public function register(RegisterShop $store)
     {
         return $store->register()->charge();
     }
 
-    public function activate(RegisterStore $store, Shopify $shopify, Request $request) {
+    public function activate(RegisterShop $store, Shopify $shopify, Request $request) {
         $charge = $request->get('charge_id');
 
         if ($store->hasAcceptedCharge($charge)) {
             $store->activate($charge);
         }
 
-        return $shopify->shopApps();
+        return $shopify->shop()->apps();
     }
 
     public function login(Request $request)

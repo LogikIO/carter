@@ -4,7 +4,7 @@ namespace Woolf\Carter\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
-use Woolf\Carter\RegisterStore;
+use Woolf\Carter\RegisterShop;
 
 class VerifyChargeAccepted
 {
@@ -13,7 +13,7 @@ class VerifyChargeAccepted
 
     protected $auth;
 
-    public function __construct(RegisterStore $store, Guard $auth)
+    public function __construct(RegisterShop $store, Guard $auth)
     {
         $this->store = $store;
 

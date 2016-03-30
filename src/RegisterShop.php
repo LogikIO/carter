@@ -6,7 +6,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Str;
 use Woolf\Carter\Shopify\Shopify;
 
-class RegisterStore
+class RegisterShop
 {
     CONST HTTP_OK = 200;
 
@@ -19,7 +19,7 @@ class RegisterStore
 
     public function register()
     {
-        $shop = $this->shopify()->shop();
+        $shop = $this->shopify()->shop()->get();
 
         $user = $this->user()->create([
             'name'         => $shop['name'],
@@ -57,12 +57,12 @@ class RegisterStore
 
     public function charge()
     {
-        return $this->shopify()->charge();
+        return $this->shopify()->charge()->recurring();
     }
 
     public function activate($chargeId)
     {
-        if ($this->shopify()->activate($chargeId) !== static::HTTP_OK) {
+        if ($this->shopify()->charge()->activate($chargeId) !== static::HTTP_OK) {
             throw new \Exception();
         }
 
@@ -71,7 +71,7 @@ class RegisterStore
 
     public function hasAcceptedCharge($chargeId)
     {
-        $charge = $this->shopify()->getCharge($chargeId);
+        $charge = $this->shopify()->charge()->getRecurring($chargeId);
 
         $acceptable = ['accepted', 'active'];
 

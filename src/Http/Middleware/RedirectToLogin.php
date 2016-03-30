@@ -31,6 +31,6 @@ class RedirectToLogin
 
     protected function authorizationUrl()
     {
-        return $this->shopify->authorize(route('shopify.login'))->getTargetUrl();
+        return $this->shopify->oauth()->authorize(route('shopify.login'))->getTargetUrl();
     }
 }

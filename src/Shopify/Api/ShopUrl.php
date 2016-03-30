@@ -1,6 +1,6 @@
 <?php
 
-namespace Woolf\Carter\Shopify;
+namespace Woolf\Carter\Shopify\Api;
 
 class ShopUrl
 {

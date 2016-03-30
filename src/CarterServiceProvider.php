@@ -4,7 +4,7 @@ namespace Woolf\Carter;
 
 use Crypt;
 use Illuminate\Support\ServiceProvider;
-use Woolf\Carter\Shopify\ShopUrl;
+use Woolf\Carter\Shopify\Api\ShopUrl;
 
 class CarterServiceProvider extends ServiceProvider
 {
