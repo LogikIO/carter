@@ -4,6 +4,7 @@ namespace Woolf\Carter;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Str;
+use Woolf\Carter\Shopify\Shopify;
 
 class RegisterStore
 {
@@ -18,15 +19,15 @@ class RegisterStore
 
     public function register()
     {
-        $store = $this->shopify()->store();
+        $shop = $this->shopify()->shop();
 
         $user = $this->user()->create([
-            'name'         => $store['name'],
-            'email'        => $store['email'],
+            'name'         => $shop['name'],
+            'email'        => $shop['email'],
             'password'     => bcrypt(Str::random(10)),
-            'domain'       => $store['domain'],
-            'shopify_id'   => $store['id'],
-            'access_token' => $store['access_token']
+            'domain'       => $shop['domain'],
+            'shopify_id'   => $shop['id'],
+            'access_token' => $shop['access_token']
         ]);
 
         $this->login($user);
@@ -36,7 +37,7 @@ class RegisterStore
 
     protected function shopify()
     {
-        return $this->app->make(ShopifyGateway::class);
+        return $this->app->make(Shopify::class);
     }
 
     protected function user()

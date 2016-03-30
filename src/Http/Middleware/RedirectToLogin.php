@@ -4,16 +4,17 @@ namespace Woolf\Carter\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
-use Woolf\Carter\ShopifyGateway;
+use Woolf\Carter\Shopify\Shopify;
 
 class RedirectToLogin
 {
     protected $auth;
     protected $shopify;
 
-    public function __construct(Guard $auth, ShopifyGateway $shopify)
+    public function __construct(Guard $auth, Shopify $shopify)
     {
         $this->auth = $auth;
+
         $this->shopify = $shopify;
     }
 
