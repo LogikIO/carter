@@ -2,8 +2,6 @@
 
 namespace Woolf\Carter;
 
-use Illuminate\Contracts\Encryption\Encrypter;
-
 trait ShopOwner
 {
 
