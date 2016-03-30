@@ -44,4 +44,14 @@ class EndpointTest extends TestCase
 
         $this->assertEquals('https://foo.bar/some/path?baz=qux&this=that', $endpoint->build('some/path', $query));
     }
+
+    /** @test */
+    function it_does_not_encode_commas()
+    {
+        $endpoint = new Woolf\Carter\Shopify\Endpoint('foo.bar');
+
+        $query = ['baz' => 'qux,this,that'];
+
+        $this->assertEquals('https://foo.bar/some/path?baz=qux,this,that', $endpoint->build('some/path', $query));
+    }
 }

@@ -16,7 +16,7 @@ class Endpoint
         $url = 'https://'.$this->domain.'/'.trim($path, '/');
 
         if ($query) {
-            $url .= '?'.http_build_query($query, '', '&');
+            $url .= '?'.urldecode(http_build_query($query, '', '&'));
         }
 
         return $url;
