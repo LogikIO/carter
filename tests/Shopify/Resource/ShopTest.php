@@ -13,12 +13,15 @@ class ShopTest extends TestCase
         $client = function () {
             $mock = m::mock(\GuzzleHttp\Client::class);
 
-            $mock->shouldReceive('get')->with('https://shop.domain/admin/shop.json?fields=id,name');
+            $mock->shouldReceive('get')->with(
+                'https://shop.domain/admin/shop.json?fields=id,name',
+                ['headers' => ['X-Shopify-Access-Token' => 'access_token']]
+            );
 
             return $mock;
         };
 
-        $shop = new Shop(new Endpoint('shop.domain'), $client);
+        $shop = new Shop(new Endpoint('shop.domain'), $client, 'access_token');
 
         $shop->get(['id', 'name']);
     }

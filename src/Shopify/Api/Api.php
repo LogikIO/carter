@@ -37,11 +37,7 @@ abstract class Api
 
     protected function tokenHeader()
     {
-        return [
-            'headers' => [
-                'X-Shopify-Access-Token' => $this->accessToken()
-            ]
-        ];
+        return ['headers' => ['X-Shopify-Access-Token' => $this->accessToken()]];
     }
 
     protected function accessToken()
