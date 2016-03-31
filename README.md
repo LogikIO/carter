@@ -15,11 +15,28 @@ $ composer require woolf/carter
 ...
 
     'providers' => [
+    
         ...
         Woolf\Carter\CarterServiceProvider::class,
     
     ];
     
+```
+
+### Register Shopify facade. - config/app.php
+
+```php
+<?php
+
+...
+
+    'aliases' => [
+
+            ...
+            'Shopify' => Woolf\Carter\ShopifyFacade::class,
+
+        ],
+
 ```
 
 ### Create and run database migration.
