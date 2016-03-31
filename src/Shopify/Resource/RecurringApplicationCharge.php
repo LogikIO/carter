@@ -3,7 +3,6 @@
 namespace Woolf\Carter\Shopify\Resource;
 
 use InvalidArgumentException;
-use Psr\Http\Message\ResponseInterface;
 
 class RecurringApplicationCharge extends Resource
 {
@@ -24,9 +23,7 @@ class RecurringApplicationCharge extends Resource
 
         $url = $this->endpoint->build("admin/recurring_application_charges/{$this->id}/activate.json");
 
-        $response = $this->client->create()->post($url, $options + $this->tokenHeader());
-
-        return $response->getStatusCode();
+        return $this->client->create()->post($url, $options + $this->tokenHeader());
     }
 
     public function confirm($charge)

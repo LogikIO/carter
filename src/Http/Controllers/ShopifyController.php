@@ -73,16 +73,12 @@ class ShopifyController extends Controller
         return $store->register()->charge();
     }
 
-    public function activate(Request $request)
+    public function activate(Request $request, RegisterShop $shop)
     {
         $charge = Shopify::recurringCharge($request->get('charge_id'));
 
         if ($charge->isAccepted()) {
-            if ($charge->activate() !== 200) {
-                throw new \Exception;
-            }
-
-            auth()->user()->update(['charge_id' => $request->get('charge_id')]);
+            $shop->activate($request->get('charge_id'));
         }
 
         return Shopify::shop()->apps();

@@ -13,9 +13,9 @@ class VerifyChargeAccepted
 
     public function __construct(RegisterShop $shop)
     {
-
         $this->shop = $shop;
     }
+
     public function handle($request, Closure $next)
     {
         $user = auth()->user();
