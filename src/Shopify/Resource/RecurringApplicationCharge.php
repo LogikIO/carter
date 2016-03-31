@@ -13,6 +13,11 @@ class RecurringApplicationCharge extends Resource
         $this->id = $id;
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function activate()
     {
         if (is_null($this->id)) {

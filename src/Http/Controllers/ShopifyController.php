@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Str;
 use Shopify;
 use Woolf\Carter\Http\Middleware\RedirectIfLoggedIn;
 use Woolf\Carter\Http\Middleware\RedirectToLogin;
@@ -16,7 +17,6 @@ use Woolf\Carter\Http\Middleware\RequestHasShopDomain;
 use Woolf\Carter\Http\Middleware\VerifyChargeAccepted;
 use Woolf\Carter\Http\Middleware\VerifySignature;
 use Woolf\Carter\Http\Middleware\VerifyState;
-use Woolf\Carter\RegisterShop;
 
 class ShopifyController extends Controller
 {
@@ -52,33 +52,46 @@ class ShopifyController extends Controller
 
     public function install(Request $request)
     {
-        $this->validate(
-            $request,
-            ['shop' => 'required|unique:users,domain|max:255'],
-            ['shop.unique' => 'Store has already been registered']
-        );
+        $rules = ['shop' => 'required|unique:users,domain|max:255'];
+
+        $messages = ['shop.unique' => 'Store has already been registered'];
+
+        $this->validate($request, $rules, $messages);
 
         return Shopify::oauth()->authorize();
     }
 
     public function registerStore()
     {
-        $registrationForm = Config::get('carter.shopify.views.register_form');
-
-        return view($registrationForm);
+        return view('shopify.auth.register');
     }
 
-    public function register(RegisterShop $store)
+    public function register()
     {
-        return $store->register()->charge();
+        $shop = Shopify::shop()->get();
+
+        auth()->login(app('carter.auth.model')->create([
+            'name'         => $shop['name'],
+            'email'        => $shop['email'],
+            'password'     => bcrypt(Str::random(10)),
+            'domain'       => $shop['domain'],
+            'shopify_id'   => $shop['id'],
+            'access_token' => $shop['access_token']
+        ]));
+
+        $charge = Shopify::recurringCharge()->create(config('carter.shopify.plan'));
+
+        return Shopify::recurringCharge()->confirm($charge);
     }
 
-    public function activate(Request $request, RegisterShop $shop)
+    public function activate(Request $request)
     {
         $charge = Shopify::recurringCharge($request->get('charge_id'));
 
         if ($charge->isAccepted()) {
-            $shop->activate($request->get('charge_id'));
+            Shopify::recurringCharge($charge->getId())->activate();
+
+            auth()->user()->update(['charge_id' => $charge->getId()]);
         }
 
         return Shopify::shop()->apps();
@@ -95,8 +108,6 @@ class ShopifyController extends Controller
 
     public function dashboard()
     {
-        $dashboard = Config::get('carter.shopify.views.dashboard');
-
-        return view($dashboard, ['user' => Auth::user()]);
+        return view('shopify.app.dashboard', ['user' => auth()->user()]);
     }
 }

@@ -35,11 +35,6 @@ return [
             'test'       => true
         ],
 
-        'views' => [
-            'register_form' => 'shopify.auth.register',
-            'dashboard'     => 'shopify.app.dashboard',
-        ],
-
     ]
 
 ];
