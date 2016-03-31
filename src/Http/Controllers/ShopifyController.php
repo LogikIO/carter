@@ -50,7 +50,7 @@ class ShopifyController extends Controller
         ]);
     }
 
-    public function install(Request $request, Shopify $shopify)
+    public function install(Request $request)
     {
         $this->validate(
             $request,
@@ -58,7 +58,7 @@ class ShopifyController extends Controller
             ['shop.unique' => 'Store has already been registered']
         );
 
-        return $shopify->oauth()->authorize(route('shopify.register'));
+        return Shopify::oauth()->authorize();
     }
 
     public function registerStore()
@@ -73,21 +73,21 @@ class ShopifyController extends Controller
         return $store->register()->charge();
     }
 
-    public function activate(RegisterShop $store, Shopify $shopify, Request $request) {
+    public function activate(RegisterShop $store, Request $request) {
         $charge = $request->get('charge_id');
 
         if ($store->hasAcceptedCharge($charge)) {
             $store->activate($charge);
         }
 
-        return $shopify->shop()->apps();
+        return Shopify::shop()->apps();
     }
 
     public function login(Request $request)
     {
-        Auth::login(
-            app('carter.auth.model')->whereDomain($request->get('shop'))->first()
-        );
+        $user = app('carter.auth.model')->whereDomain($request->get('shop'))->first();
+
+        Auth::login($user);
 
         return redirect()->route('shopify.dashboard');
     }
