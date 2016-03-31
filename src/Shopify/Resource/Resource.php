@@ -2,6 +2,7 @@
 
 namespace Woolf\Carter\Shopify\Resource;
 
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Woolf\Carter\Shopify\Client;
 use Woolf\Carter\Shopify\Endpoint;
@@ -31,5 +32,16 @@ abstract class Resource
     protected function tokenHeader()
     {
         return ['headers' => ['X-Shopify-Access-Token' => $this->accessToken]];
+    }
+
+    public function parse(ResponseInterface $response, $extract = false)
+    {
+        $response = json_decode($response->getBody(), true);
+
+        if ($extract) {
+            return (isset($response[$extract])) ? $response[$extract] : false;
+        }
+
+        return $response;
     }
 }

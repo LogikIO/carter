@@ -2,36 +2,47 @@
 
 namespace Woolf\Carter\Shopify;
 
-use Woolf\Carter\Shopify\Api\Charge;
+use Illuminate\Support\Str;
 use Woolf\Carter\Shopify\Api\OAuth;
-use Woolf\Carter\Shopify\Api\Product;
-use Woolf\Carter\Shopify\Api\Shop;
+use Woolf\Carter\Shopify\Resource\RecurringApplicationCharge;
+use Woolf\Carter\Shopify\Resource\Shop;
 
 class Shopify
 {
-    public function charge()
+    public function shop()
     {
-        return $this->make(Charge::class);
+        return $this->make(Shop::class);
     }
 
     public function oauth()
     {
-        return $this->make(OAuth::class);
+        $oauth = $this->make(OAuth::class);
+
+        session(['state' => Str::random(40)]);
+
+        $oauth->setConfig([
+            'client_id'     => config('carter.shopify.client_id'),
+            'client_secret' => config('carter.shopify.client_secret'),
+            'scope'         => implode(',', config('carter.shopify.scopes')),
+            'redirect_uri'  => route('shopify.register'),
+            'state'         => session('state'),
+            'code'          => request('code')
+        ]);
+
+        return $oauth;
     }
 
-    public function product()
+    public function recurringCharge($id = null)
     {
-        return $this->make(Product::class);
-    }
+        $recurringCharge = $this->make(RecurringApplicationCharge::class);
 
-    public function shop()
-    {
-        return $this->make(Shop::class);
+        $recurringCharge->setId($id);
+
+        return $recurringCharge;
     }
 
     protected function make($class)
     {
         return app($class);
     }
-
 }
