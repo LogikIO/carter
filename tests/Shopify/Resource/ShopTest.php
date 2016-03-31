@@ -17,7 +17,7 @@ class ShopTest extends TestCase
         $client->shouldReceive('get')->with(
             'https://shop.domain/admin/shop.json?fields=id,name',
             ['headers' => ['X-Shopify-Access-Token' => 'access_token']]
-        );
+        )->andReturn(new \GuzzleHttp\Psr7\Response(200, [], json_encode(['shop' => []])));
 
         $shop = new Shop(new Endpoint('shop.domain'), $client, 'access_token');
 

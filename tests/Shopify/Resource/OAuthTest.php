@@ -50,7 +50,7 @@ class OAuthTest extends TestCase
                     'code'          => 'C',
                 ]
             ]
-        );
+        )->andReturn(new \GuzzleHttp\Psr7\Response(200, [], json_encode(['access_token' => 'foo'])));
 
         $oauth = new OAuth(
             new Endpoint('shop.domain'),
