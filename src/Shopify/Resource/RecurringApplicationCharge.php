@@ -3,6 +3,7 @@
 namespace Woolf\Carter\Shopify\Resource;
 
 use InvalidArgumentException;
+use Psr\Http\Message\ResponseInterface;
 
 class RecurringApplicationCharge extends Resource
 {
@@ -23,7 +24,9 @@ class RecurringApplicationCharge extends Resource
 
         $url = $this->endpoint->build("admin/recurring_application_charges/{$this->id}/activate.json");
 
-        return $this->client->create()->post($url, $options + $this->tokenHeader());
+        $response = $this->client->create()->post($url, $options + $this->tokenHeader());
+
+        return $response->getStatusCode();
     }
 
     public function confirm($charge)
@@ -37,7 +40,9 @@ class RecurringApplicationCharge extends Resource
 
         $url = $this->endpoint->build('admin/recurring_application_charges.json');
 
-        return $this->client->create()->post($url, $options + $this->tokenHeader());
+        $response = $this->client->create()->post($url, $options + $this->tokenHeader());
+
+        return $this->parse($response, 'recurring_application_charge');
     }
 
     public function isAccepted()
@@ -46,19 +51,31 @@ class RecurringApplicationCharge extends Resource
             throw new InvalidArgumentException('Charge Id Missing');
         }
 
-        $charge = $this->parse($this->get(), 'recurring_application_charge');
+        $charge = $this->get();
 
-        $acceptable = ['accepted', 'active'];
-
-        return in_array($charge['status'], $acceptable);
+        return in_array($charge['status'], ['accepted', 'active']);
     }
 
     public function get()
     {
-        $url = (! is_null($this->id))
-            ? $this->endpoint->build("admin/recurring_application_charges/{$this->id}.json")
-            : $this->endpoint->build("admin/recurring_application_charges.json");
+        return (is_null($this->id)) ? $this->all() : $this->single();
+    }
 
-        return $this->client->create()->get($url, $this->tokenHeader());
+    protected function all()
+    {
+        $url = $this->endpoint->build('admin/recurring_application_charges.json');
+
+        $response = $this->client->create()->get($url, $this->tokenHeader());
+
+        return $this->parse($response, 'recurring_application_charges');
+    }
+
+    protected function single()
+    {
+        $url = $this->endpoint->build("admin/recurring_application_charges/{$this->id}.json");
+
+        $response = $this->client->create()->get($url, $this->tokenHeader());
+
+        return $this->parse($response, 'recurring_application_charge');
     }
 }

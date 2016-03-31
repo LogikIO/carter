@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Shopify;
 use Woolf\Carter\Http\Middleware\RedirectIfLoggedIn;
 use Woolf\Carter\Http\Middleware\RedirectToLogin;
 use Woolf\Carter\Http\Middleware\RequestHasShopDomain;
@@ -16,7 +17,6 @@ use Woolf\Carter\Http\Middleware\VerifyChargeAccepted;
 use Woolf\Carter\Http\Middleware\VerifySignature;
 use Woolf\Carter\Http\Middleware\VerifyState;
 use Woolf\Carter\RegisterShop;
-use Woolf\Carter\Shopify\Shopify;
 
 class ShopifyController extends Controller
 {
@@ -73,11 +73,16 @@ class ShopifyController extends Controller
         return $store->register()->charge();
     }
 
-    public function activate(RegisterShop $store, Request $request) {
-        $charge = $request->get('charge_id');
+    public function activate(Request $request)
+    {
+        $charge = Shopify::recurringCharge($request->get('charge_id'));
 
-        if ($store->hasAcceptedCharge($charge)) {
-            $store->activate($charge);
+        if ($charge->isAccepted()) {
+            if ($charge->activate() !== 200) {
+                throw new \Exception;
+            }
+
+            auth()->user()->update(['charge_id' => $request->get('charge_id')]);
         }
 
         return Shopify::shop()->apps();

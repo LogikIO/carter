@@ -3,7 +3,7 @@
 namespace Woolf\Carter\Shopify;
 
 use Illuminate\Support\Str;
-use Woolf\Carter\Shopify\Api\OAuth;
+use Woolf\Carter\Shopify\Resource\OAuth;
 use Woolf\Carter\Shopify\Resource\RecurringApplicationCharge;
 use Woolf\Carter\Shopify\Resource\Shop;
 
@@ -11,7 +11,7 @@ class Shopify
 {
     public function shop()
     {
-        return $this->make(Shop::class);
+        return $this->make(Shop::class, ['accessToken' => $this->accessToken()]);
     }
 
     public function oauth()
@@ -34,15 +34,24 @@ class Shopify
 
     public function recurringCharge($id = null)
     {
-        $recurringCharge = $this->make(RecurringApplicationCharge::class);
+        $recurringCharge = $this->make(RecurringApplicationCharge::class, ['accessToken' => $this->accessToken()]);
 
         $recurringCharge->setId($id);
 
         return $recurringCharge;
     }
 
-    protected function make($class)
+    protected function accessToken()
     {
-        return app($class);
+        if ($user = auth()->user()) {
+            return $user->access_token;
+        }
+
+        return $this->oauth()->token();
+    }
+
+    protected function make($class, $parameters = [])
+    {
+        return app($class, $parameters);
     }
 }

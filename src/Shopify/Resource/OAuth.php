@@ -45,6 +45,6 @@ class OAuth extends Resource
 
         $url = $this->endpoint->build('admin/oauth/access_token');
 
-        return $this->client->create()->post($url, $options);
+        return $this->parse($this->client->create()->post($url, $options), 'access_token');
     }
 }

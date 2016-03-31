@@ -18,6 +18,8 @@ class Shop extends Resource
 
         $url = $this->endpoint->build('admin/shop.json', $fields);
 
-        return $this->client->create()->get($url, $this->tokenHeader());
+        $response = $this->client->create()->get($url, $this->tokenHeader());
+
+        return $this->parse($response, 'shop') + ['access_token' => $this->accessToken];
     }
 }

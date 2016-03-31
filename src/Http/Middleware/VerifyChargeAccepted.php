@@ -3,31 +3,27 @@
 namespace Woolf\Carter\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Auth\Guard;
+use Shopify;
 use Woolf\Carter\RegisterShop;
 
 class VerifyChargeAccepted
 {
 
-    protected $store;
+    protected $shop;
 
-    protected $auth;
-
-    public function __construct(RegisterShop $store, Guard $auth)
+    public function __construct(RegisterShop $shop)
     {
-        $this->store = $store;
 
-        $this->auth = $auth;
+        $this->shop = $shop;
     }
-
     public function handle($request, Closure $next)
     {
-        $user = $this->auth->user();
+        $user = auth()->user();
 
-        if (! $user->charge_id || ! $this->store->hasAcceptedCharge($user->charge_id)) {
-            return view('carter::shopify.auth.charge', [
-                'redirect' => $this->store->charge()->getTargetUrl()
-            ]);
+        if (! $user->charge_id || ! Shopify::recurringCharge($user->charge_id)->isAccepted()) {
+            $redirect = $this->shop->charge()->getTargetUrl();
+
+            return view('carter::shopify.auth.charge', compact('redirect'));
         }
 
         return $next($request);
