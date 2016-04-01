@@ -15,7 +15,7 @@ class Product extends Resource
     {
         $url = $this->endpoint->build('admin/products/count.json', $query);
 
-        $response = $this->client->create()->get($url, $this->tokenHeader());
+        $response = $this->client()->get($url, $this->tokenHeader());
 
         return $this->parse($response, 'count');
     }
@@ -29,7 +29,7 @@ class Product extends Resource
     {
         $url = $this->endpoint->build('admin/products.json');
 
-        $response = $this->client->create()->get($url, $this->tokenHeader());
+        $response = $this->client()->get($url, $this->tokenHeader());
 
         return $this->parse($response, 'products');
     }
@@ -38,7 +38,7 @@ class Product extends Resource
     {
         $url = $this->endpoint->build("admin/products/{$this->id}.json");
 
-        $response = $this->client->create()->get($url, $this->tokenHeader());
+        $response = $this->client()->get($url, $this->tokenHeader());
 
         return $this->parse($response, 'product');
     }
