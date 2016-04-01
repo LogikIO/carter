@@ -20,17 +20,16 @@ class OAuthTest extends TestCase
         $oauth->setConfig([
             'client_id'    => 'A',
             'scope'        => 'B',
-            'redirect_uri' => 'C',
-            'state'        => 'D'
+            'state'        => 'C'
         ]);
 
         $this->assertInstanceOf(
             RedirectResponse::class,
-            $oauth->authorize()
+            $oauth->authorize('return')
         );
         $this->assertEquals(
-            'https://shop.domain/admin/oauth/authorize?client_id=A&scope=B&redirect_uri=C&state=D',
-            $oauth->authorize()->getTargetUrl()
+            'https://shop.domain/admin/oauth/authorize?client_id=A&scope=B&redirect_uri=return&state=C',
+            $oauth->authorize('return')->getTargetUrl()
         );
     }
 
