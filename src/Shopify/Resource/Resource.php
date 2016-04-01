@@ -24,6 +24,11 @@ abstract class Resource
         $this->accessToken = $accessToken;
     }
 
+    protected function client($config = [])
+    {
+        return $this->client->create($config);
+    }
+
     protected function redirect($url)
     {
         return new RedirectResponse($url);

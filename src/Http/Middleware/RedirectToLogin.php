@@ -19,6 +19,6 @@ class RedirectToLogin
 
     protected function authorizationUrl()
     {
-        return Shopify::oauth()->authorize()->getTargetUrl();
+        return Shopify::oauth()->authorize(route('shopify.login'))->getTargetUrl();
     }
 }

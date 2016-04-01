@@ -33,7 +33,7 @@ class Shopify
         return $oauth;
     }
 
-    public function product($id = null)
+    public function products($id = null)
     {
         $product = $this->makeWithAccessToken(Product::class);
 
@@ -42,7 +42,7 @@ class Shopify
         return $product;
     }
 
-    public function recurringCharge($id = null)
+    public function recurringCharges($id = null)
     {
         $recurringCharge = $this->makeWithAccessToken(RecurringApplicationCharge::class);
 

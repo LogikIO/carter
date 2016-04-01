@@ -12,10 +12,10 @@ class VerifyChargeAccepted
     {
         $user = auth()->user();
 
-        if (! $user->charge_id || ! Shopify::recurringCharge($user->charge_id)->isAccepted()) {
-            $charge = Shopify::recurringCharge()->create(config('carter.shopify.plan'));
+        if (! $user->charge_id || ! Shopify::recurringCharges($user->charge_id)->isAccepted()) {
+            $charge = Shopify::recurringCharges()->create(config('carter.shopify.plan'));
 
-            $redirect = Shopify::recurringCharge()->confirm($charge)->getTargetUrl();
+            $redirect = Shopify::recurringCharges()->confirm($charge)->getTargetUrl();
 
             return view('carter::shopify.auth.charge', compact('redirect'));
         }

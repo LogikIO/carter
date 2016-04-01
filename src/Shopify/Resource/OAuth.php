@@ -18,12 +18,12 @@ class OAuth extends Resource
         $this->config = array_merge($this->config, $config);
     }
 
-    public function authorize()
+    public function authorize($returnUrl)
     {
         $options = [
             'client_id'    => $this->config['client_id'],
             'scope'        => $this->config['scope'],
-            'redirect_uri' => $this->config['redirect_uri'],
+            'redirect_uri' => $returnUrl,
             'state'        => $this->config['state']
         ];
 

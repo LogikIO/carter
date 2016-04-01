@@ -58,7 +58,7 @@ class ShopifyController extends Controller
 
         $this->validate($request, $rules, $messages);
 
-        return Shopify::oauth()->authorize();
+        return Shopify::oauth()->authorize(route('shopify.register'));
     }
 
     public function registerStore()
@@ -79,17 +79,17 @@ class ShopifyController extends Controller
             'access_token' => $shop['access_token']
         ]));
 
-        $charge = Shopify::recurringCharge()->create(config('carter.shopify.plan'));
+        $charge = Shopify::recurringCharges()->create(config('carter.shopify.plan'));
 
-        return Shopify::recurringCharge()->confirm($charge);
+        return Shopify::recurringCharges()->confirm($charge);
     }
 
     public function activate(Request $request)
     {
-        $charge = Shopify::recurringCharge($request->get('charge_id'));
+        $charge = Shopify::recurringCharges($request->get('charge_id'));
 
         if ($charge->isAccepted()) {
-            Shopify::recurringCharge($charge->getId())->activate();
+            Shopify::recurringCharges($charge->getId())->activate();
 
             auth()->user()->update(['charge_id' => $charge->getId()]);
         }
