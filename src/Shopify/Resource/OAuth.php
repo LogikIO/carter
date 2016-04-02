@@ -4,47 +4,25 @@ namespace Woolf\Carter\Shopify\Resource;
 
 class OAuth extends Resource
 {
-    protected $config = [
-        'client_id'     => null,
-        'client_secret' => null,
-        'scope'         => null,
-        'redirect_uri'  => null,
-        'state'         => null,
-        'code'          => null
-    ];
 
-    public function setConfig($config)
+    public function authorizeUrl($returnUrl, $state)
     {
-        $this->config = array_merge($this->config, $config);
-    }
-
-    public function authorize($returnUrl)
-    {
-        $options = [
-            'client_id'    => $this->config['client_id'],
-            'scope'        => $this->config['scope'],
+        return $this->endpoint('admin/oauth/authorize', [
+            'client_id'    => config('carter.shopify.client_id'),
+            'scope'        => implode(',', config('carter.shopify.scopes')),
             'redirect_uri' => $returnUrl,
-            'state'        => $this->config['state']
-        ];
-
-        $url = $this->endpoint->build('admin/oauth/authorize', $options);
-
-        return $this->redirect($url);
+            'state'        => $state
+        ]);
     }
 
-    public function token()
+    public function requestAccessToken($code)
     {
-        $options = [
-            'headers'     => ['Accept' => 'application/json'],
-            'form_params' => [
-                'client_id'     => $this->config['client_id'],
-                'client_secret' => $this->config['client_secret'],
-                'code'          => $this->config['code'],
-            ]
-        ];
+        $response = $this->post($this->endpoint('admin/oauth/access_token'), [
+            'client_id'     => config('carter.shopify.client_id'),
+            'client_secret' => config('carter.shopify.client_secret'),
+            'code'          => $code,
+        ]);
 
-        $url = $this->endpoint->build('admin/oauth/access_token');
-
-        return $this->parse($this->client->create()->post($url, $options), 'access_token');
+        return $this->parse($response, 'access_token');
     }
 }

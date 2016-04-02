@@ -2,23 +2,31 @@
 
 namespace Woolf\Carter\Shopify\Resource;
 
+use Illuminate\Support\Str;
+
 class Shop extends Resource
 {
 
-    public function apps()
+    public function mapToUser()
     {
-        return $this->redirect($this->endpoint->build('admin/apps'));
+        $shop = $this->retrieve(['id', 'name', 'email', 'domain']);
+
+        $shop['shopify_id'] = $shop['id'];
+
+        unset($shop['id']);
+
+        $shop['password'] = bcrypt(Str::random(20));
+
+        return $shop;
     }
 
-    public function get(array $fields = [])
+    public function retrieve(array $fields = [])
     {
         if (! empty($fields)) {
             $fields = ['fields' => implode(',', $fields)];
         }
 
-        $url = $this->endpoint->build('admin/shop.json', $fields);
-
-        $response = $this->client->create()->get($url, $this->tokenHeader());
+        $response = $this->get($this->endpoint('admin/shop.json', $fields));
 
         return $this->parse($response, 'shop') + ['access_token' => $this->accessToken];
     }

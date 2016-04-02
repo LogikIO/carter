@@ -2,71 +2,49 @@
 
 namespace Woolf\Carter\Shopify\Resource;
 
-class Product extends Resource
+class Product extends ResourceWithId
 {
-    protected $id;
 
-    public function setId($id)
+    public function retrieve()
     {
-        $this->id = $id;
+        $path = 'admin/products';
+
+        $url = $this->endpoint($this->haveId() ? "{$path}/{$this->id}.json" : "{$path}.json");
+
+        return $this->parse(
+            $this->get($url, $this->tokenHeader()),
+            $this->haveId() ? 'product' : 'products'
+        );
     }
 
     public function count($query = [])
     {
-        $url = $this->endpoint->build('admin/products/count.json', $query);
-
-        $response = $this->client()->get($url, $this->tokenHeader());
+        $response = $this->get($this->endpoint('admin/products/count.json', $query));
 
         return $this->parse($response, 'count');
     }
 
-    public function get()
-    {
-        return (is_null($this->id)) ? $this->all() : $this->single();
-    }
-
-    protected function all()
-    {
-        $url = $this->endpoint->build('admin/products.json');
-
-        $response = $this->client()->get($url, $this->tokenHeader());
-
-        return $this->parse($response, 'products');
-    }
-
-    protected function single()
-    {
-        $url = $this->endpoint->build("admin/products/{$this->id}.json");
-
-        $response = $this->client()->get($url, $this->tokenHeader());
-
-        return $this->parse($response, 'product');
-    }
-
     public function create(array $product)
     {
-        $url = $this->endpoint->build("admin/products.json");
+        $url = $this->endpoint("admin/products.json");
 
-        $response = $this->client()->post($url, ['form_params' => ['product' => $product]] + $this->tokenHeader());
+        $response = $this->post($url, ['product' => $product]);
 
         return $this->parse($response, 'product');
     }
 
     public function update(array $product)
     {
-        $url = $this->endpoint->build("admin/products/{$this->id}.json");
-
-        $response = $this->client()->put($url, ['form_params' => ['product' => $product]] + $this->tokenHeader());
+        $response = $this->put($this->endpoint("admin/products/{$this->id}.json"), ['product' => $product]);
 
         return $this->parse($response, 'product');
     }
 
-    public function delete()
+    public function destroy()
     {
-        $url = $this->endpoint->build("admin/products/{$this->id}.json");
-
-        $response =  $this->client()->delete($url, $this->tokenHeader());
+        $response = $this->delete($this->endpoint("admin/products/{$this->id}.json"));
 
         return $response->getStatusCode();
     }
+
 }

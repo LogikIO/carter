@@ -23,6 +23,10 @@ class ShopifyController extends Controller
 
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    protected $installRules = ['shop' => 'required|unique:users,domain|max:255'];
+
+    protected $installMessages = ['shop.unique' => 'Store has already been registered'];
+
     public function __construct()
     {
         $this->middleware(RequestHasShopDomain::class, [
@@ -52,13 +56,13 @@ class ShopifyController extends Controller
 
     public function install(Request $request)
     {
-        $rules = ['shop' => 'required|unique:users,domain|max:255'];
+        $this->validate($request, $this->installRules, $this->installMessages);
 
-        $messages = ['shop.unique' => 'Store has already been registered'];
+        session(['state' => Str::random(40)]);
 
-        $this->validate($request, $rules, $messages);
+        $url = Shopify::resource('oauth')->authorizeUrl(route('shopify.register'), session('state'));
 
-        return Shopify::oauth()->authorize(route('shopify.register'));
+        return redirect($url);
     }
 
     public function registerStore()
@@ -68,46 +72,41 @@ class ShopifyController extends Controller
 
     public function register()
     {
-        $shop = Shopify::shop()->get();
+        $user = app('carter.auth.model');
 
-        auth()->login(app('carter.auth.model')->create([
-            'name'         => $shop['name'],
-            'email'        => $shop['email'],
-            'password'     => bcrypt(Str::random(10)),
-            'domain'       => $shop['domain'],
-            'shopify_id'   => $shop['id'],
-            'access_token' => $shop['access_token']
-        ]));
+        auth()->login($user->create(Shopify::resource('shop')->mapToUser()));
 
-        $charge = Shopify::recurringCharges()->create(config('carter.shopify.plan'));
+        $charge = Shopify::resource('recurring_charges')->create(config('carter.shopify.plan'));
 
-        return Shopify::recurringCharges()->confirm($charge);
+        return redirect($charge['confirmation_url']);
     }
 
     public function activate(Request $request)
     {
-        $charge = Shopify::recurringCharges($request->get('charge_id'));
+        $charge = Shopify::resource('recurring_charges')->setId($request->get('charge_id'));
 
         if ($charge->isAccepted()) {
-            Shopify::recurringCharges($charge->getId())->activate();
-
-            auth()->user()->update(['charge_id' => $charge->getId()]);
+            auth()->user()->update([
+                'charge_id' => $charge->activate()['id']
+            ]);
         }
 
-        return Shopify::shop()->apps();
+        return redirect(Shopify::resource('shop')->endpoint('admin/apps'));
     }
 
     public function login(Request $request)
     {
         $user = app('carter.auth.model')->whereDomain($request->get('shop'))->first();
 
-        Auth::login($user);
+        auth()->login($user);
 
         return redirect()->route('shopify.dashboard');
     }
 
     public function dashboard()
     {
-        return view('shopify.app.dashboard', ['user' => auth()->user()]);
+        $products = Shopify::resource('product')->retrieve();
+
+        return view('carter::shopify.app.dashboard', ['user' => auth()->user(), 'products' => $products]);
     }
 }

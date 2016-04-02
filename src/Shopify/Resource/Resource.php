@@ -2,36 +2,63 @@
 
 namespace Woolf\Carter\Shopify\Resource;
 
+use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Woolf\Carter\Shopify\Client;
-use Woolf\Carter\Shopify\Endpoint;
 
 abstract class Resource
 {
-    protected $endpoint;
-
-    protected $client;
+    protected $domain;
 
     protected $accessToken;
 
-    public function __construct(Endpoint $endpoint, Client $client, $accessToken = null)
+    public function __construct($domain, $accessToken = null)
     {
-        $this->endpoint = $endpoint;
-
-        $this->client = $client;
+        $this->domain = $domain;
 
         $this->accessToken = $accessToken;
     }
 
-    protected function client($config = [])
+    public function endpoint($path, $query = false)
     {
-        return $this->client->create($config);
+        $url = 'https://'.$this->domain.'/'.trim($path, '/');
+
+        if ($query) {
+            $url .= '?'.urldecode(http_build_query($query, '', '&'));
+        }
+
+        return $url;
     }
 
-    protected function redirect($url)
+    public function get($url, array $options = [])
     {
-        return new RedirectResponse($url);
+        return $this->client()->get($url, $options);
+    }
+
+    public function post($url, array $options = [])
+    {
+        return $this->client()->post($url, $this->optionsToFormParams($options));
+    }
+
+    public function put($url, array $options = [])
+    {
+        return $this->client()->put($url, $this->optionsToFormParams($options));
+    }
+
+    public function delete($url, array $options = [])
+    {
+        return $this->client()->delete($url, $this->optionsToFormParams($options));
+    }
+
+    protected function optionsToFormParams(array $options = [])
+    {
+        return (! empty($options)) ? ['form_params' => $options] : $options;
+    }
+
+    protected function client()
+    {
+        $config = (! is_null($this->accessToken)) ? $this->tokenHeader() : [];
+
+        return new Client($config);
     }
 
     protected function tokenHeader()
@@ -44,7 +71,7 @@ abstract class Resource
         $response = json_decode($response->getBody(), true);
 
         if ($extract) {
-            return (isset($response[$extract])) ? $response[$extract] : false;
+            return isset($response[$extract]) ? $response[$extract] : false;
         }
 
         return $response;

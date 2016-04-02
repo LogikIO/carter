@@ -2,7 +2,6 @@
 
 namespace Woolf\Carter\Shopify;
 
-use Illuminate\Support\Str;
 use Woolf\Carter\Shopify\Resource\OAuth;
 use Woolf\Carter\Shopify\Resource\Product;
 use Woolf\Carter\Shopify\Resource\RecurringApplicationCharge;
@@ -10,63 +9,55 @@ use Woolf\Carter\Shopify\Resource\Shop;
 
 class Shopify
 {
-    public function shop()
+
+    public function resource($type)
     {
-        return $this->makeWithAccessToken(Shop::class);
+        $method = 'make'.implode('', array_map('ucfirst', explode('_', $type)));
+
+        return $this->$method();
     }
 
-    public function oauth()
+    protected function makeProduct()
     {
-        $oauth = $this->make(OAuth::class);
-
-        session(['state' => Str::random(40)]);
-
-        $oauth->setConfig([
-            'client_id'     => config('carter.shopify.client_id'),
-            'client_secret' => config('carter.shopify.client_secret'),
-            'scope'         => implode(',', config('carter.shopify.scopes')),
-            'redirect_uri'  => route('shopify.register'),
-            'state'         => session('state'),
-            'code'          => request('code')
-        ]);
-
-        return $oauth;
+        return new Product($this->domain(), $this->accessToken());
     }
 
-    public function products($id = null)
+    protected function makeOauth()
     {
-        $product = $this->makeWithAccessToken(Product::class);
-
-        $product->setId($id);
-
-        return $product;
+        return new OAuth($this->domain());
     }
 
-    public function recurringCharges($id = null)
+    protected function makeRecurringCharges()
     {
-        $recurringCharge = $this->makeWithAccessToken(RecurringApplicationCharge::class);
-
-        $recurringCharge->setId($id);
-
-        return $recurringCharge;
+        return new RecurringApplicationCharge($this->domain(), $this->accessToken());
     }
 
-    protected function makeWithAccessToken($class)
+    protected function makeShop()
     {
-        return $this->make($class, ['accessToken' => $this->accessToken()]);
+        return new Shop($this->domain(), $this->accessToken());
     }
 
-    protected function make($class, $parameters = [])
+    protected function domain()
     {
-        return app($class, $parameters);
+        return ($user = $this->user()) ? $user->domain : request('shop');
     }
 
     protected function accessToken()
     {
-        if ($user = auth()->user()) {
+        if ($user = $this->user()) {
             return $user->access_token;
         }
 
-        return $this->oauth()->token();
+        if ($code = request('code')) {
+            return $this->makeOauth()->requestAccessToken(request('code'));
+        }
+
+        return null;
     }
+
+    protected function user()
+    {
+        return auth()->user();
+    }
+
 }

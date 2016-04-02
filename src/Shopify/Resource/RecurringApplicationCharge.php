@@ -2,82 +2,49 @@
 
 namespace Woolf\Carter\Shopify\Resource;
 
-use InvalidArgumentException;
-
-class RecurringApplicationCharge extends Resource
+class RecurringApplicationCharge extends ResourceWithId
 {
-    protected $id;
-
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    public function getId()
-    {
-        return $this->id;
-    }
 
     public function activate()
     {
-        if (is_null($this->id)) {
-            throw new InvalidArgumentException('Charge Id Missing');
-        }
+        $this->mustIncludeId();
 
-        $options = ['form_params' => ['recurring_application_charge' => $this->id]];
+        $response = $this->post(
+            $this->endpoint("admin/recurring_application_charges/{$this->id}/activate.json"),
+            ['recurring_application_charge' => $this->id]
+        );
 
-        $url = $this->endpoint->build("admin/recurring_application_charges/{$this->id}/activate.json");
-
-        return $this->client->create()->post($url, $options + $this->tokenHeader());
-    }
-
-    public function confirm($charge)
-    {
-        return $this->redirect($charge['confirmation_url']);
+        return $this->parse($response, 'recurring_application_charge');
     }
 
     public function create($plan)
     {
-        $options = ['form_params' => ['recurring_application_charge' => $plan]];
-
-        $url = $this->endpoint->build('admin/recurring_application_charges.json');
-
-        $response = $this->client->create()->post($url, $options + $this->tokenHeader());
+        $response = $this->post(
+            $this->endpoint('admin/recurring_application_charges.json'),
+            ['recurring_application_charge' => $plan]
+        );
 
         return $this->parse($response, 'recurring_application_charge');
     }
 
     public function isAccepted()
     {
-        if (is_null($this->id)) {
-            throw new InvalidArgumentException('Charge Id Missing');
-        }
+        $this->mustIncludeId();
 
-        $charge = $this->get();
+        $charge = $this->retrieve();
 
         return in_array($charge['status'], ['accepted', 'active']);
     }
 
-    public function get()
+    public function retrieve()
     {
-        return (is_null($this->id)) ? $this->all() : $this->single();
-    }
+        $path = 'admin/recurring_application_charges';
 
-    protected function all()
-    {
-        $url = $this->endpoint->build('admin/recurring_application_charges.json');
+        $url = $this->endpoint($this->haveId() ? "{$path}/{$this->id}.json" : "{$path}.json");
 
-        $response = $this->client->create()->get($url, $this->tokenHeader());
-
-        return $this->parse($response, 'recurring_application_charges');
-    }
-
-    protected function single()
-    {
-        $url = $this->endpoint->build("admin/recurring_application_charges/{$this->id}.json");
-
-        $response = $this->client->create()->get($url, $this->tokenHeader());
-
-        return $this->parse($response, 'recurring_application_charge');
+        return $this->parse(
+            $this->get($url, $this->tokenHeader()),
+            $this->haveId() ? 'recurring_application_charge' : 'recurring_application_charges'
+        );
     }
 }

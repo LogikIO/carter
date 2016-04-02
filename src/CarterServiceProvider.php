@@ -5,6 +5,7 @@ namespace Woolf\Carter;
 use Crypt;
 use Illuminate\Support\ServiceProvider;
 use Woolf\Carter\Shopify\Endpoint;
+use Woolf\Carter\Shopify\Resource\Resource;
 
 class CarterServiceProvider extends ServiceProvider
 {
@@ -31,12 +32,6 @@ class CarterServiceProvider extends ServiceProvider
     {
         $this->app->bind('carter.auth.model', function ($app) {
             return $app->make($app->make('config')->get('auth.providers.users.model'));
-        });
-
-        $this->app->bind(Endpoint::class, function ($app) {
-            $domain = ($user = $app['auth']->user()) ? $user->domain : $app['request']->input('shop');
-
-            return new Endpoint($domain);
         });
 
         $this->mergeConfigFrom(__DIR__.'/config/carter.php', 'carter');
