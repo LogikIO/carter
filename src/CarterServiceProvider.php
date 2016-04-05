@@ -4,8 +4,8 @@ namespace Woolf\Carter;
 
 use Crypt;
 use Illuminate\Support\ServiceProvider;
-use Woolf\Carter\Shopify\Endpoint;
-use Woolf\Carter\Shopify\Resource\Resource;
+use Woolf\Shophpify\Client;
+use Woolf\Shophpify\Endpoint;
 
 class CarterServiceProvider extends ServiceProvider
 {
@@ -26,6 +26,9 @@ class CarterServiceProvider extends ServiceProvider
             __DIR__.'/config/carter.php' => config_path('carter.php')
         ], 'config');
 
+        $this->mergeConfigFrom(__DIR__.'/config/carter.php', 'carter');
+
+        $this->commands('command.carter.table');
     }
 
     public function register()
@@ -34,12 +37,20 @@ class CarterServiceProvider extends ServiceProvider
             return $app->make($app->make('config')->get('auth.providers.users.model'));
         });
 
-        $this->mergeConfigFrom(__DIR__.'/config/carter.php', 'carter');
+        $this->app->when(Endpoint::class)
+            ->needs('$domain')
+            ->give(function () {
+                return ($user = auth()->user()) ? $user->domain : request('shop');
+            });
+
+        $this->app->when(Client::class)
+            ->needs('$accessToken')
+            ->give(function () {
+                return ($user = auth()->user()) ? $user->access_token : null;
+            });
 
         $this->app->singleton('command.carter.table', function () {
             return new CarterTableCommand();
         });
-
-        $this->commands('command.carter.table');
     }
 }
