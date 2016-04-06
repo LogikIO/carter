@@ -12,7 +12,7 @@
             width: 100%;
             display: table;
             font-weight: 100;
-            font-family: sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .container {
@@ -33,11 +33,6 @@
     <div class="container">
         <div class="content">
             <div class="title">Carter</div>
-
-            <h3>Products</h3>
-                @foreach($products as $product)
-                    <p>{{ $product['title'] }}</p>
-                @endforeach
         </div>
     </div>
 @stop

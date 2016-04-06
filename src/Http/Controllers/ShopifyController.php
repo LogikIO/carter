@@ -103,11 +103,8 @@ class ShopifyController extends Controller
         return redirect()->route('shopify.dashboard');
     }
 
-    public function dashboard(Product $product)
+    public function dashboard()
     {
-        return view('carter::shopify.app.dashboard', [
-            'user' => auth()->user(),
-            'products' => $product->all()
-        ]);
+        return view('carter::shopify.app.dashboard', ['user' => auth()->user()]);
     }
 }
