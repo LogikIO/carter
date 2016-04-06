@@ -48,7 +48,7 @@ class Shopify
         return $this->client->parse($response, 'access_token');
     }
 
-    public function shop($fields)
+    public function shop($fields = [])
     {
         if (! empty($fields)) {
             $fields = ['fields' => implode(',', $fields)];
