@@ -105,6 +105,6 @@ class ShopifyController extends Controller
 
     public function dashboard()
     {
-        return view('carter::shopify.app.dashboard', ['user' => auth()->user()]);
+        return view('shopify.app.dashboard', ['user' => auth()->user()]);
     }
 }
