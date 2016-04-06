@@ -109,7 +109,7 @@ Carter comes configured with routes and views to quickly get users registered wi
 
 Method | URI | Name | Description
 --- | --- | --- | ---
-GET | /activate | shopify.activate | Activate recurring application charge after user has accepted. User is redirected here as the step in the registration process.
+GET | /activate | shopify.activate | Activate recurring application charge after user has accepted. User is redirected here as the final step in the registration process.
 GET | /dashboard | shopify.dashboard | The entry point view for your app.
 GET/POST | /install | shopify.install | Using "shop" value from request, redirects to Shopify for authorization to access shop's data.
 GET | /login | shopify.login | Will find and log in user. Requires valid Shopify request signature. 
