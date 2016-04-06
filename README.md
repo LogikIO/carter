@@ -105,19 +105,15 @@ SHOPIFY_SECRET=1234567890abcdefghijklmnopqrstuv
 $ php artisan vendor:publish
 ```
 
-In Shopify App settings, add Application URL `https://your-site.com/dashboard` and Redirection URL `http://your-site.com/register`
+Carter comes configured with routes and views to quickly get users registered with your app.
 
-https://docs.shopify.com/api/sdks/embedded-app-sdk/getting-started#https-ssl-certificates-and-mixed-content-restrictions
+Method | URI | Name | Description
+--- | --- | --- | ---
+GET | /activate | shopify.activate | Activate recurring application charge after user has accepted. User is redirected here as the step in the registration process.
+GET | /dashboard | shopify.dashboard | The entry point view for your app.
+GET/POST | /install | shopify.install | Using "shop" value from request, redirects to Shopify for authorization to access shop's data.
+GET | /login | shopify.login | Will find and log in user. Requires valid Shopify request signature. 
+GET | /register | shopify.register | Create user for shop and setup recurring application charge. Requires valid Shopify request signature.
+GET | /signup | shopify.signup | Display sign up form view. You'll need to create this file `resources/views/shopify/auth/register.blade.php`. Submit POST request to `route(shopify.install)` with "shop" value.
 
-Visit `http://your-site.com/install?shop=your-test-store.myshopify.com` to install app in Shopify store.
-
-Can also create a view `shopify/auth/register.blade.php` with a form containing a text field with name `shop` to submit a post request to `route('shopify.install')`. `http://your-site.com/signup` to view the form.
-
-Add your own views by extending `carter::shopify.embedded` and `carter::shopify.escape_iframe`
-
-https://docs.shopify.com/api/sdks/embedded-app-sdk
-
-
-
-More to come.
 
