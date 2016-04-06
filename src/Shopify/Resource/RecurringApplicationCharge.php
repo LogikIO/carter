@@ -2,49 +2,45 @@
 
 namespace Woolf\Carter\Shopify\Resource;
 
-class RecurringApplicationCharge extends ResourceWithId
+class RecurringApplicationCharge extends Resource
 {
 
-    public function activate()
+    public function all()
     {
-        $this->mustIncludeId();
+        $response = $this->client->get($this->endpoint->build("admin/recurring_application_charges.json"));
 
-        $response = $this->post(
-            $this->endpoint("admin/recurring_application_charges/{$this->id}/activate.json"),
-            ['recurring_application_charge' => $this->id]
-        );
+        return $this->client->parse($response, 'recurring_application_charges');
+    }
 
-        return $this->parse($response, 'recurring_application_charge');
+    public function get($id)
+    {
+        $response = $this->client->get($this->endpoint->build("admin/recurring_application_charges/{$id}.json"));
+
+        return $this->client->parse($response, 'recurring_application_charge');
+    }
+
+    public function activate($id)
+    {
+        $url = $this->endpoint->build("admin/recurring_application_charges/{$id}/activate.json");
+
+        $response = $this->client->post($url, ['recurring_application_charge' => $id]);
+
+        return $this->client->parse($response, 'recurring_application_charge');
     }
 
     public function create($plan)
     {
-        $response = $this->post(
-            $this->endpoint('admin/recurring_application_charges.json'),
-            ['recurring_application_charge' => $plan]
-        );
+        $url = $this->endpoint->build('admin/recurring_application_charges.json');
 
-        return $this->parse($response, 'recurring_application_charge');
+        $response = $this->client->post($url, ['recurring_application_charge' => $plan]);
+
+        return $this->client->parse($response, 'recurring_application_charge');
     }
 
-    public function isAccepted()
+    public function isAccepted($id)
     {
-        $this->mustIncludeId();
-
-        $charge = $this->retrieve();
+        $charge = $this->get($id);
 
         return in_array($charge['status'], ['accepted', 'active']);
-    }
-
-    public function retrieve()
-    {
-        $path = 'admin/recurring_application_charges';
-
-        $url = $this->endpoint($this->haveId() ? "{$path}/{$this->id}.json" : "{$path}.json");
-
-        return $this->parse(
-            $this->get($url, $this->tokenHeader()),
-            $this->haveId() ? 'recurring_application_charge' : 'recurring_application_charges'
-        );
     }
 }

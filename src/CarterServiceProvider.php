@@ -4,8 +4,10 @@ namespace Woolf\Carter;
 
 use Crypt;
 use Illuminate\Support\ServiceProvider;
+use Woolf\Carter\Shopify\Shopify;
 use Woolf\Shophpify\Client;
 use Woolf\Shophpify\Endpoint;
+use Woolf\Shophpify\Signature;
 
 class CarterServiceProvider extends ServiceProvider
 {
@@ -33,7 +35,7 @@ class CarterServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->bind('carter.auth.model', function ($app) {
+        $this->app->bind('carter_user', function ($app) {
             return $app->make($app->make('config')->get('auth.providers.users.model'));
         });
 
@@ -46,7 +48,13 @@ class CarterServiceProvider extends ServiceProvider
         $this->app->when(Client::class)
             ->needs('$accessToken')
             ->give(function () {
-                return ($user = auth()->user()) ? $user->access_token : null;
+                return (auth()->check()) ? auth()->user()->access_token : null;
+            });
+
+        $this->app->when(Signature::class)
+            ->needs('$request')
+            ->give(function () {
+                return request()->all();
             });
 
         $this->app->singleton('command.carter.table', function () {

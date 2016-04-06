@@ -17,6 +17,9 @@ use Woolf\Carter\Http\Middleware\RequestHasShopDomain;
 use Woolf\Carter\Http\Middleware\VerifyChargeAccepted;
 use Woolf\Carter\Http\Middleware\VerifySignature;
 use Woolf\Carter\Http\Middleware\VerifyState;
+use Woolf\Carter\Shopify\Resource\Product;
+use Woolf\Carter\Shopify\Resource\RecurringApplicationCharge;
+use Woolf\Shophpify\Client;
 
 class ShopifyController extends Controller
 {
@@ -58,11 +61,7 @@ class ShopifyController extends Controller
     {
         $this->validate($request, $this->installRules, $this->installMessages);
 
-        session(['state' => Str::random(40)]);
-
-        $url = Shopify::resource('oauth')->authorizeUrl(route('shopify.register'), session('state'));
-
-        return redirect($url);
+        return redirect(Shopify::authorizationUrl(route('shopify.register')));
     }
 
     public function registerStore()
@@ -70,43 +69,45 @@ class ShopifyController extends Controller
         return view('shopify.auth.register');
     }
 
-    public function register()
+    public function register(Request $request)
     {
-        $user = app('carter.auth.model');
+        $shopify = app(\Woolf\Carter\Shopify\Shopify::class, [
+            'client' => new Client(Shopify::requestAccessToken($request->code))]
+        );
 
-        auth()->login($user->create(Shopify::resource('shop')->mapToUser()));
+        auth()->login(app('carter_user')->create($shopify->mapToUser()));
 
-        $charge = Shopify::resource('recurring_charges')->create(config('carter.shopify.plan'));
+        $charge = app(RecurringApplicationCharge::class)->create(config('carter.shopify.plan'));
 
         return redirect($charge['confirmation_url']);
     }
 
-    public function activate(Request $request)
+    public function activate(Request $request, RecurringApplicationCharge $charge)
     {
-        $charge = Shopify::resource('recurring_charges')->setId($request->get('charge_id'));
+        $id = $request->get('charge_id');
 
-        if ($charge->isAccepted()) {
-            auth()->user()->update([
-                'charge_id' => $charge->activate()['id']
-            ]);
+        if ($charge->isAccepted($id)) {
+            $charge->activate($id);
+            auth()->user()->update(['charge_id' => $id]);
         }
 
-        return redirect(Shopify::resource('shop')->endpoint('admin/apps'));
+        return redirect(Shopify::appsUrl());
     }
 
     public function login(Request $request)
     {
-        $user = app('carter.auth.model')->whereDomain($request->get('shop'))->first();
+        $user = app('carter_user')->whereDomain($request->get('shop'))->first();
 
         auth()->login($user);
 
         return redirect()->route('shopify.dashboard');
     }
 
-    public function dashboard()
+    public function dashboard(Product $product)
     {
-        $products = Shopify::resource('product')->retrieve();
-
-        return view('carter::shopify.app.dashboard', ['user' => auth()->user(), 'products' => $products]);
+        return view('carter::shopify.app.dashboard', [
+            'user' => auth()->user(),
+            'products' => $product->all()
+        ]);
     }
 }

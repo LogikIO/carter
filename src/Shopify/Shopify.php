@@ -20,7 +20,12 @@ class Shopify
         $this->client = $client;
     }
 
-    public function authorize($redirect)
+    public function appsUrl()
+    {
+        return $this->endpoint->build('admin/apps');
+    }
+
+    public function authorizationUrl($redirect)
     {
         session(['state' => Str::random(40)]);
 
@@ -43,4 +48,25 @@ class Shopify
         return $this->client->parse($response, 'access_token');
     }
 
+    public function shop($fields)
+    {
+        if (! empty($fields)) {
+            $fields = ['fields' => implode(',', $fields)];
+        }
+
+        $response = $this->client->get($this->endpoint->build('admin/shop.json', $fields));
+
+        return $this->client->parse($response, 'shop') + ['access_token' => $this->client->getAccessToken()];
+    }
+
+    public function mapToUser()
+    {
+        $shop = $this->shop(['id', 'name', 'email', 'domain']);
+
+        $shop['shopify_id'] = $shop['id'];
+
+        unset($shop['id']);
+
+        return $shop + ['password' => bcrypt(Str::random(20))];
+    }
 }

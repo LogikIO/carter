@@ -5,55 +5,37 @@ namespace Woolf\Carter\Http\Middleware;
 use Closure;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\Collection;
+use Woolf\Shophpify\Signature;
 
 class VerifySignature
 {
 
+    protected $signature;
+
     protected $config;
 
-    protected $request;
-
-    public function __construct(Repository $config)
+    public function __construct(Signature $signature, Repository $config)
     {
+        $this->signature = $signature;
+
         $this->config = $config;
     }
 
     public function handle($request, Closure $next)
     {
-        $this->request = $request;
+        $hasValidHmac = $this->signature->hasValidHmac(
+            $request->get('hmac'),
+            $this->config->get('carter.shopify.client_secret')
+        );
 
-        if (! $this->hasValidHmac() || ! $this->hasValidShop()) {
-            app()->abort(403, 'Client Error: 403');
+        $hasValidNonce = $this->signature->hasValidNonce($request->get('state'));
+
+        $hasValidHostname = $this->signature->hasValidHostname();
+
+        if (! ($hasValidHmac && $hasValidNonce && $hasValidHostname)) {
+            app()->abort(403, 'Client Error: 403 - Invalid Signature');
         }
 
         return $next($request);
-    }
-
-    public function hasValidHmac()
-    {
-        $arguments = Collection::make($this->request->except(['signature', 'hmac']));
-
-        $message = $arguments->map(function ($value, $key) {
-            return $key . '=' . $value;
-        })->sort()->implode('&');
-
-        $hash = hash_hmac($this->getHashingAlgorithm(), $message, $this->config->get('carter.shopify.client_secret'));
-
-        return ($hash === $this->request->get('hmac'));
-    }
-
-    protected function getHashingAlgorithm()
-    {
-        return 'sha256';
-    }
-
-    public function hasValidShop()
-    {
-        return preg_match($this->getValidShopPattern(), $this->request->get('shop'));
-    }
-
-    protected function getValidShopPattern()
-    {
-        return '/^([a-z]|[0-9]|\.|-)+myshopify.com$/i';
     }
 }

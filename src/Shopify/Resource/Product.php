@@ -2,47 +2,47 @@
 
 namespace Woolf\Carter\Shopify\Resource;
 
-class Product extends ResourceWithId
+class Product extends Resource
 {
 
-    public function retrieve()
+    public function all()
     {
-        $path = 'admin/products';
+        $response = $this->client->get($this->endpoint->build('admin/products.json'));
 
-        $url = $this->endpoint($this->haveId() ? "{$path}/{$this->id}.json" : "{$path}.json");
+        return $this->client->parse($response, 'products');
+    }
 
-        return $this->parse(
-            $this->get($url, $this->tokenHeader()),
-            $this->haveId() ? 'product' : 'products'
-        );
+    public function get($id)
+    {
+        $response = $this->client->get($this->endpoint->build("admin/products/{$id}.json"));
+
+        return $this->client->parse($response, 'product');
     }
 
     public function count($query = [])
     {
-        $response = $this->get($this->endpoint('admin/products/count.json', $query));
+        $response = $this->client->get($this->endpoint->build('admin/products/count.json', $query));
 
-        return $this->parse($response, 'count');
+        return $this->client->parse($response, 'count');
     }
 
     public function create(array $product)
     {
-        $url = $this->endpoint("admin/products.json");
+        $response = $this->client->post($this->endpoint->build('admin/products.json'), compact('product'));
 
-        $response = $this->post($url, ['product' => $product]);
-
-        return $this->parse($response, 'product');
+        return $this->client->parse($response, 'product');
     }
 
-    public function update(array $product)
+    public function update($id, array $product)
     {
-        $response = $this->put($this->endpoint("admin/products/{$this->id}.json"), ['product' => $product]);
+        $response = $this->client->put($this->endpoint->build("admin/products/{$id}.json"), compact('product'));
 
-        return $this->parse($response, 'product');
+        return $this->client->parse($response, 'product');
     }
 
-    public function destroy()
+    public function delete($id)
     {
-        $response = $this->delete($this->endpoint("admin/products/{$this->id}.json"));
+        $response = $this->client->delete($this->endpoint->build("admin/products/{$id}.json"));
 
         return $response->getStatusCode();
     }

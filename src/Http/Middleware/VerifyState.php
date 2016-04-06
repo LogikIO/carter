@@ -3,15 +3,22 @@
 namespace Woolf\Carter\Http\Middleware;
 
 use Closure;
+use Woolf\Shophpify\Signature;
 
 class VerifyState
 {
+
+    protected $signature;
+
+    public function __construct(Signature $signature)
+    {
+        $this->signature = $signature;
+    }
+
     public function handle($request, Closure $next)
     {
-        $state = $request->session()->pull('state');
-
-        if (! strlen($state) || $state !== $request->input('state')) {
-            app()->abort(403, 'Client Error: 403');
+        if (! $this->signature->hasValidNonce($request->input('state'))) {
+            app()->abort(403, 'Client Error: 403 - Invalid State');
         }
 
         return $next($request);
