@@ -31,6 +31,6 @@ class VerifyChargeAccepted
     {
         $charge = $this->charge->create(config('carter.shopify.plan'));
 
-        return view('carter::shopify.auth.charge', ['redirect' => $charge['confirmation_url']]);
+        return view('carter::shopify.redirect_escape_iframe', ['redirect' => $charge['confirmation_url']]);
     }
 }
