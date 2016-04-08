@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    @yield('head')
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    @yield('head')
 </head>
 <body>
 
