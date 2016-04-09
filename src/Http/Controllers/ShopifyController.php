@@ -17,9 +17,11 @@ use Woolf\Carter\Http\Middleware\RequestHasShopDomain;
 use Woolf\Carter\Http\Middleware\VerifyChargeAccepted;
 use Woolf\Carter\Http\Middleware\VerifySignature;
 use Woolf\Carter\Http\Middleware\VerifyState;
-use Woolf\Carter\Shopify\Resource\RecurringApplicationCharge;
 use Woolf\Shophpify\Client;
+use Woolf\Shophpify\Endpoint;
 use Woolf\Shophpify\Resource\OAuth;
+use Woolf\Shophpify\Resource\RecurringApplicationCharge;
+use Woolf\Shophpify\Resource\Shop;
 
 class ShopifyController extends Controller
 {
@@ -78,21 +80,27 @@ class ShopifyController extends Controller
         return view('carter::shopify.auth.register');
     }
 
-    public function register(Request $request)
+    public function register(Request $request, OAuth $oauth)
     {
-        $shopify = app(\Woolf\Carter\Shopify\Shopify::class, [
-                'client' => new Client(Shopify::requestAccessToken($request->code))
-            ]
-        );
+        $accessToken = $oauth->requestAccessToken($request->code);
 
-        auth()->login(app('carter_user')->create($shopify->mapToUser()));
+        $shop = app(Shop::class, [
+            'client' => new Client($accessToken)
+        ])->get(['id', 'name', 'email', 'domain']);
+
+        $shop['shopify_id'] = $shop['id'];
+        unset($shop['id']);
+
+        $user = app('carter_user')->create($shop + ['password' => bcrypt(Str::random(20))]);
+
+        auth()->login($user);
 
         $charge = app(RecurringApplicationCharge::class)->create(config('carter.shopify.plan'));
 
         return redirect($charge['confirmation_url']);
     }
 
-    public function activate(Request $request, RecurringApplicationCharge $charge)
+    public function activate(Request $request, RecurringApplicationCharge $charge, Endpoint $endpoint)
     {
         $id = $request->get('charge_id');
 
@@ -101,7 +109,7 @@ class ShopifyController extends Controller
             auth()->user()->update(['charge_id' => $id]);
         }
 
-        return redirect(Shopify::appsUrl());
+        return redirect($endpoint->build('admin/apps'));
     }
 
     public function login(Request $request)

@@ -4,7 +4,6 @@ namespace Woolf\Carter\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Config\Repository;
-use Illuminate\Support\Collection;
 use Woolf\Shophpify\Signature;
 
 class VerifySignature
