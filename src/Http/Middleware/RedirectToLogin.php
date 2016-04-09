@@ -9,10 +9,18 @@ use Woolf\Shophpify\Resource\OAuth;
 class RedirectToLogin
 {
 
-    public function handle($request, Closure $next, OAuth $oauth)
+
+    protected $oauth;
+
+    public function __construct(OAuth $oauth)
+    {
+        $this->oauth = $oauth;
+    }
+
+    public function handle($request, Closure $next)
     {
         if (auth()->guest()) {
-            $redirect = $oauth->authorizationUrl(
+            $redirect = $this->oauth->authorizationUrl(
                 config('carter.shopify.client_id'),
                 implode(',', config('carter.shopify.scopes')),
                 route('shopify.register'),
