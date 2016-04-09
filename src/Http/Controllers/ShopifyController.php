@@ -82,7 +82,11 @@ class ShopifyController extends Controller
 
     public function register(Request $request, OAuth $oauth)
     {
-        $accessToken = $oauth->requestAccessToken($request->code);
+        $accessToken = $oauth->requestAccessToken(
+            config('carter.shopify.client_id'),
+            config('carter.shopify.client_secret'),
+            $request->code
+        );
 
         $shop = app(Shop::class, [
             'client' => new Client($accessToken)
