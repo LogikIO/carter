@@ -27,11 +27,9 @@ class VerifySignature
             $this->config->get('carter.shopify.client_secret')
         );
 
-        $hasValidNonce = $this->signature->hasValidNonce($request->get('state'));
-
         $hasValidHostname = $this->signature->hasValidHostname();
 
-        if (! ($hasValidHmac && $hasValidNonce && $hasValidHostname)) {
+        if (! ($hasValidHmac && $hasValidHostname)) {
             app()->abort(403, 'Client Error: 403 - Invalid Signature');
         }
 
