@@ -4,7 +4,7 @@ namespace Woolf\Carter\Http\Middleware;
 
 use Closure;
 use Shopify;
-use Woolf\Carter\Shopify\Resource\RecurringApplicationCharge;
+use Woolf\Shophpify\Resource\RecurringApplicationCharge;
 
 class VerifyChargeAccepted
 {
