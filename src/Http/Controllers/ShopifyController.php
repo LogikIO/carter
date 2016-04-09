@@ -17,9 +17,9 @@ use Woolf\Carter\Http\Middleware\RequestHasShopDomain;
 use Woolf\Carter\Http\Middleware\VerifyChargeAccepted;
 use Woolf\Carter\Http\Middleware\VerifySignature;
 use Woolf\Carter\Http\Middleware\VerifyState;
-use Woolf\Carter\Shopify\Resource\Product;
 use Woolf\Carter\Shopify\Resource\RecurringApplicationCharge;
 use Woolf\Shophpify\Client;
+use Woolf\Shophpify\Resource\OAuth;
 
 class ShopifyController extends Controller
 {
@@ -57,11 +57,20 @@ class ShopifyController extends Controller
         ]);
     }
 
-    public function install(Request $request)
+    public function install(Request $request, OAuth $oauth)
     {
         $this->validate($request, $this->installRules, $this->installMessages);
 
-        return redirect(Shopify::authorizationUrl(route('shopify.register')));
+        session(['state' => Str::random(40)]);
+
+        $url = $oauth->authorizationUrl(
+            config('carter.shopify.client_id'),
+            implode(',', config('carter.shopify.scopes')),
+            route('shopify.register'),
+            session('state')
+        );
+
+        return redirect($url);
     }
 
     public function registerStore()
@@ -72,7 +81,8 @@ class ShopifyController extends Controller
     public function register(Request $request)
     {
         $shopify = app(\Woolf\Carter\Shopify\Shopify::class, [
-            'client' => new Client(Shopify::requestAccessToken($request->code))]
+                'client' => new Client(Shopify::requestAccessToken($request->code))
+            ]
         );
 
         auth()->login(app('carter_user')->create($shopify->mapToUser()));
