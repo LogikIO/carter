@@ -95,7 +95,10 @@ class ShopifyController extends Controller
         $shop['shopify_id'] = $shop['id'];
         unset($shop['id']);
 
-        $user = app('carter_user')->create($shop + ['password' => bcrypt(Str::random(20))]);
+        $user = app('carter_user')->create($shop + [
+                'access_token' => $accessToken,
+                'password'     => bcrypt(Str::random(20))
+            ]);
 
         auth()->login($user);
 
