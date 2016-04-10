@@ -37,32 +37,32 @@ return [
 
         'routes' => [
             'signup' => [
-                'url'    => 'signup',
+                'uri'    => 'signup',
                 'action' => '\Woolf\Carter\Http\Controllers\ShopifyController@registerStore'
             ],
 
             'install' => [
-                'url'    => 'install',
+                'uri'    => 'install',
                 'action' => '\Woolf\Carter\Http\Controllers\ShopifyController@install'
             ],
 
             'register' => [
-                'url'    => 'register',
+                'uri'    => 'register',
                 'action' => '\Woolf\Carter\Http\Controllers\ShopifyController@register'
             ],
 
             'activate' => [
-                'url'    => 'activate',
+                'uri'    => 'activate',
                 'action' => '\Woolf\Carter\Http\Controllers\ShopifyController@activate'
             ],
 
             'login' => [
-                'url'    => 'login',
+                'uri'    => 'login',
                 'action' => '\Woolf\Carter\Http\Controllers\ShopifyController@login'
             ],
 
             'dashboard' => [
-                'url'    => 'dashboard',
+                'uri'    => 'dashboard',
                 'action' => '\Woolf\Carter\Http\Controllers\ShopifyController@dashboard'
             ],
         ]
