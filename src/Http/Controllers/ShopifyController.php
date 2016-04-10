@@ -17,11 +17,10 @@ use Woolf\Carter\Http\Middleware\RequestHasShopDomain;
 use Woolf\Carter\Http\Middleware\VerifyChargeAccepted;
 use Woolf\Carter\Http\Middleware\VerifySignature;
 use Woolf\Carter\Http\Middleware\VerifyState;
-use Woolf\Shophpify\Client;
+use Woolf\Carter\RegisterShop;
 use Woolf\Shophpify\Endpoint;
 use Woolf\Shophpify\Resource\OAuth;
 use Woolf\Shophpify\Resource\RecurringApplicationCharge;
-use Woolf\Shophpify\Resource\Shop;
 
 class ShopifyController extends Controller
 {
@@ -80,27 +79,9 @@ class ShopifyController extends Controller
         return view('carter::shopify.auth.register');
     }
 
-    public function register(Request $request, OAuth $oauth)
+    public function register(RegisterShop $registerShop)
     {
-        $accessToken = $oauth->requestAccessToken(
-            config('carter.shopify.client_id'),
-            config('carter.shopify.client_secret'),
-            $request->code
-        );
-
-        $shop = app(Shop::class, [
-            'client' => new Client($accessToken)
-        ])->get(['id', 'name', 'email', 'domain']);
-
-        $shop['shopify_id'] = $shop['id'];
-        unset($shop['id']);
-
-        $user = app('carter_user')->create($shop + [
-                'access_token' => $accessToken,
-                'password'     => bcrypt(Str::random(20))
-            ]);
-
-        auth()->login($user);
+        auth()->login($registerShop->execute());
 
         $charge = app(RecurringApplicationCharge::class)->create(config('carter.shopify.plan'));
 
