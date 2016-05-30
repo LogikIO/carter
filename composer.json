@@ -19,8 +19,8 @@
     "mockery/mockery": "^0.9.4"
   },
   "autoload-dev": {
-    "psr-4": {
-      "Woolf\\Carter\\Tests\\": "tests/"
-    }
+    "classmap": [
+      "tests/TestCase.php"
+    ]
   }
 }
