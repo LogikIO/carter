@@ -23,11 +23,11 @@ class RedirectToLogin
             $redirect = $this->oauth->authorizationUrl(
                 config('carter.shopify.client_id'),
                 implode(',', config('carter.shopify.scopes')),
-                route('shopify.register'),
+                route('shopify.login'),
                 session('state')
             );
 
-            return view('carter::shopify.auth.login', compact('redirect'));
+            return view('carter::shopify.redirect_escape_iframe', compact('redirect'));
         }
 
         return $next($request);
