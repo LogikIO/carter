@@ -12,7 +12,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
 use Shopify;
 use Woolf\Carter\Http\Middleware\RedirectIfLoggedIn;
-use Woolf\Carter\Http\Middleware\RedirectToLogin;
+use Woolf\Carter\Http\Middleware\Authenticate;
 use Woolf\Carter\Http\Middleware\RequestHasShopDomain;
 use Woolf\Carter\Http\Middleware\VerifyChargeAccepted;
 use Woolf\Carter\Http\Middleware\VerifySignature;
@@ -47,10 +47,6 @@ class ShopifyController extends Controller
 
         $this->middleware(RedirectIfLoggedIn::class, [
             'only' => ['install', 'registerStore', 'register', 'login']
-        ]);
-
-        $this->middleware(RedirectToLogin::class, [
-            'only' => ['dashboard']
         ]);
 
         $this->middleware(VerifyChargeAccepted::class, [

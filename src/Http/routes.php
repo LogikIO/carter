@@ -1,5 +1,7 @@
 <?php
 
+use Woolf\Carter\Http\Middleware\Authenticate;
+
 Route::group(['middleware' => 'web'], function ($router) {
 
     $router->get(
@@ -31,6 +33,6 @@ Route::group(['middleware' => 'web'], function ($router) {
     $router->get(
         config('carter.shopify.routes.dashboard.uri'),
         config('carter.shopify.routes.dashboard.action')
-    )->name('shopify.dashboard');
+    )->name('shopify.dashboard')->middleware(Authenticate::class);
 
 });

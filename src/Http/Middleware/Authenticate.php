@@ -6,10 +6,8 @@ use Closure;
 use Shopify;
 use Woolf\Shophpify\Resource\OAuth;
 
-class RedirectToLogin
+class Authenticate
 {
-
-
     protected $oauth;
 
     public function __construct(OAuth $oauth)
