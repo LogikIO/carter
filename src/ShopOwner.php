@@ -4,7 +4,6 @@ namespace Woolf\Carter;
 
 trait ShopOwner
 {
-
     public function setAccessTokenAttribute($value)
     {
         $this->attributes['access_token'] = encrypt($value);
@@ -14,5 +13,4 @@ trait ShopOwner
     {
         return decrypt($this->attributes['access_token']);
     }
-
 }

@@ -1,6 +1,7 @@
 @extends('carter::shopify.embedded')
 
 @section('content')
+    <link href="https://fonts.googleapis.com/css?family=Raleway:100,500" rel="stylesheet" type="text/css">
     <style>
         html, body {
             height: 100%;
@@ -12,7 +13,7 @@
             width: 100%;
             display: table;
             font-weight: 100;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-family: 'Raleway';
         }
 
         .container {
@@ -28,6 +29,12 @@
 
         .title {
             font-size: 96px;
+            font-weight: 100;
+            text-transform: uppercase;
+            letter-spacing: .25em;
+            margin-right: -.25em;
+            color: #d1d8e6;
+            text-shadow: 2px 2px 4px #a74fc5;
         }
     </style>
     <div class="container">
