@@ -33,8 +33,8 @@
             text-transform: uppercase;
             letter-spacing: .25em;
             margin-right: -.25em;
-            color: #d1d8e6;
-            text-shadow: 2px 2px 4px #a74fc5;
+            color: #d8f0e9;
+            text-shadow: 2px 2px 4px #29bc94;
         }
     </style>
     <div class="container">
