@@ -37,14 +37,7 @@ class ShopifyController extends Controller
 
         session(['state' => Str::random(40)]);
 
-        $url = $oauth->authorizationUrl(
-            config('carter.shopify.client_id'),
-            implode(',', config('carter.shopify.scopes')),
-            route('shopify.register'),
-            session('state')
-        );
-
-        return redirect($url);
+        return redirect(carter_auth_url());
     }
 
     public function registerStore()
