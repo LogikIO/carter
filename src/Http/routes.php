@@ -2,38 +2,33 @@
 
 use Woolf\Carter\Http\Middleware\Authenticate;
 use Woolf\Carter\Http\Middleware\RedirectIfAuthenticated;
+use Woolf\Carter\Http\Middleware\RequestHasShopDomain;
+use Woolf\Carter\Http\Middleware\VerifyChargeAccepted;
+use Woolf\Carter\Http\Middleware\VerifySignature;
+use Woolf\Carter\Http\Middleware\VerifyState;
 
 Route::group(['middleware' => 'web'], function ($router) {
 
-    $router->get(
-        config('carter.shopify.routes.signup.uri'),
-        config('carter.shopify.routes.signup.action')
-    )->name('shopify.signup');
+    $router->get(carter_route('.signup.uri'), carter_route('signup.action'))
+        ->name('shopify.signup');
 
-    $router->match(
-        ['get', 'post'],
-        config('carter.shopify.routes.install.uri'),
-        config('carter.shopify.routes.install.action')
-    )->name('shopify.install')->middleware(RedirectIfAuthenticated::class);
+    $router->match(['get', 'post'], carter_route('install.uri'), carter_route('install.action'))
+        ->middleware([RedirectIfAuthenticated::class, RequestHasShopDomain::class])
+        ->name('shopify.install');
 
-    $router->get(
-        config('carter.shopify.routes.register.uri'),
-        config('carter.shopify.routes.register.action')
-    )->name('shopify.register')->middleware(RedirectIfAuthenticated::class);
+    $router->get(carter_route('register.uri'), carter_route('register.action'))
+        ->middleware([RedirectIfAuthenticated::class, VerifyState::class, VerifySignature::class])
+        ->name('shopify.register');
 
-    $router->get(
-        config('carter.shopify.routes.activate.uri'),
-        config('carter.shopify.routes.activate.action')
-    )->name('shopify.activate');
+    $router->get(carter_route('activate.uri'), carter_route('activate.action'))
+        ->name('shopify.activate');
 
-    $router->get(
-        config('carter.shopify.routes.login.uri'),
-        config('carter.shopify.routes.login.action')
-    )->name('shopify.login')->middleware(RedirectIfAuthenticated::class);
+    $router->get(carter_route('login.uri'), carter_route('login.action'))
+        ->middleware([RedirectIfAuthenticated::class, VerifySignature::class])
+        ->name('shopify.login');
 
-    $router->get(
-        config('carter.shopify.routes.dashboard.uri'),
-        config('carter.shopify.routes.dashboard.action')
-    )->name('shopify.dashboard')->middleware(Authenticate::class);
+    $router->get(carter_route('dashboard.uri'), carter_route('dashboard.action'))
+        ->middleware([Authenticate::class, VerifyChargeAccepted::class])
+        ->name('shopify.dashboard');
 
 });

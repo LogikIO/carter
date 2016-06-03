@@ -6,7 +6,6 @@ use Closure;
 
 class RequestHasShopDomain
 {
-
     public function handle($request, Closure $next)
     {
         if (! $request->has('shop')) {

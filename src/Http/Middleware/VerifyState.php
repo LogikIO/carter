@@ -7,7 +7,6 @@ use Woolf\Shophpify\Signature;
 
 class VerifyState
 {
-
     protected $signature;
 
     public function __construct(Signature $signature)
