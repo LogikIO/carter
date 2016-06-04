@@ -3,6 +3,7 @@
 use Woolf\Carter\Http\Middleware\RedirectIfAuthenticated;
 use Woolf\Carter\Http\Middleware\RequestHasChargeId;
 use Woolf\Carter\Http\Middleware\RequestHasShopDomain;
+use Woolf\Carter\Http\Middleware\RequestHasShopifySignature;
 use Woolf\Carter\Http\Middleware\VerifySignature;
 use Woolf\Carter\Http\Middleware\VerifyState;
 
@@ -16,7 +17,13 @@ Route::group(['middleware' => 'web'], function ($router) {
         ->name('shopify.install');
 
     $router->get(carter_route('register.uri'), carter_route('register.action'))
-        ->middleware([RedirectIfAuthenticated::class, VerifyState::class, VerifySignature::class])
+        ->middleware([
+            RedirectIfAuthenticated::class,
+            RequestHasShopDomain::class,
+            RequestHasShopifySignature::class,
+            VerifyState::class,
+            VerifySignature::class,
+        ])
         ->name('shopify.register');
 
     $router->get(carter_route('activate.uri'), carter_route('activate.action'))
