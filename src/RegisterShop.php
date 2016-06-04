@@ -23,10 +23,12 @@ class RegisterShop
 
     public function execute()
     {
-        return app('carter_user')->create($this->shop($this->getAccessToken()));
+        $user = $this->user($this->getAccessToken());
+
+        return app('carter_user')->create($user);
     }
 
-    protected function shop($accessToken)
+    protected function user($accessToken)
     {
         $shop = app(Shop::class, ['client' => new Client($accessToken)])->get(['id', 'name', 'email', 'domain']);
 
