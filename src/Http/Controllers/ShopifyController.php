@@ -31,7 +31,7 @@ class ShopifyController extends Controller
 
     protected $installMessages = ['shop.unique' => 'Store has already been registered'];
 
-    public function install(Request $request, OAuth $oauth)
+    public function install(Request $request)
     {
         $this->validate($request, $this->installRules, $this->installMessages);
 
@@ -40,7 +40,7 @@ class ShopifyController extends Controller
         return redirect(carter_auth_url());
     }
 
-    public function registerStore()
+    public function signupForm()
     {
         return view('carter::shopify.auth.register');
     }
