@@ -13,11 +13,10 @@
   },
   "require": {
     "php": ">=5.5.9",
-    "woolf/shophpify": "1.1.*",
-    "illuminate/contracts": "^5.2",
-    "illuminate/support": "^5.2"
+    "woolf/shophpify": "1.1.*"
   },
   "require-dev": {
+    "laravel/framework": "5.2.*",
     "phpunit/phpunit": "4.*",
     "mockery/mockery": "^0.9.4"
   },
