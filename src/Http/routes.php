@@ -21,6 +21,7 @@ Route::group(['middleware' => 'web'], function ($router) {
         ->name('shopify.register');
 
     $router->get(carter_route('activate.uri'), carter_route('activate.action'))
+        ->middleware([Authenticate::class])
         ->name('shopify.activate');
 
     $router->get(carter_route('login.uri'), carter_route('login.action'))
