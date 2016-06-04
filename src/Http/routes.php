@@ -1,10 +1,8 @@
 <?php
 
-use Woolf\Carter\Http\Middleware\Authenticate;
 use Woolf\Carter\Http\Middleware\RedirectIfAuthenticated;
 use Woolf\Carter\Http\Middleware\RequestHasChargeId;
 use Woolf\Carter\Http\Middleware\RequestHasShopDomain;
-use Woolf\Carter\Http\Middleware\VerifyChargeAccepted;
 use Woolf\Carter\Http\Middleware\VerifySignature;
 use Woolf\Carter\Http\Middleware\VerifyState;
 
