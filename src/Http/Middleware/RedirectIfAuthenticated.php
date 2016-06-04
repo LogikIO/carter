@@ -6,7 +6,6 @@ use Closure;
 
 class RedirectIfAuthenticated
 {
-
     public function handle($request, Closure $next)
     {
         if (auth()->check()) {
