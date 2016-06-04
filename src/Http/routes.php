@@ -9,7 +9,7 @@ use Woolf\Carter\Http\Middleware\VerifyState;
 
 Route::group(['middleware' => 'web'], function ($router) {
 
-    $router->get(carter_route('.signup.uri'), carter_route('signup.action'))
+    $router->get(carter_route('signup.uri'), carter_route('signup.action'))
         ->name('shopify.signup');
 
     $router->match(['get', 'post'], carter_route('install.uri'), carter_route('install.action'))
