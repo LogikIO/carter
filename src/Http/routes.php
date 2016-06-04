@@ -2,6 +2,7 @@
 
 use Woolf\Carter\Http\Middleware\Authenticate;
 use Woolf\Carter\Http\Middleware\RedirectIfAuthenticated;
+use Woolf\Carter\Http\Middleware\RequestHasChargeId;
 use Woolf\Carter\Http\Middleware\RequestHasShopDomain;
 use Woolf\Carter\Http\Middleware\VerifyChargeAccepted;
 use Woolf\Carter\Http\Middleware\VerifySignature;
@@ -21,7 +22,7 @@ Route::group(['middleware' => 'web'], function ($router) {
         ->name('shopify.register');
 
     $router->get(carter_route('activate.uri'), carter_route('activate.action'))
-        ->middleware([])
+        ->middleware([RequestHasChargeId::class])
         ->name('shopify.activate');
 
     $router->get(carter_route('login.uri'), carter_route('login.action'))
