@@ -19,7 +19,7 @@ class Authenticate
     {
         if (auth()->guest()) {
             if (! $request->get('shop')) {
-                return redirect(route('shopify.signup'));
+                return redirect()->route('shopify.signup');
             }
 
             return view('carter::shopify.redirect_escape_iframe', ['redirect' => carter_auth_url()]);
