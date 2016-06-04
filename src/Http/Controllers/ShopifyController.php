@@ -37,7 +37,7 @@ class ShopifyController extends Controller
 
         session(['state' => Str::random(40)]);
 
-        return redirect(carter_auth_url());
+        return redirect(carter_auth_url(route('shopify.register')));
     }
 
     public function signupForm()

@@ -22,7 +22,9 @@ class Authenticate
                 return redirect()->route('shopify.signup');
             }
 
-            return view('carter::shopify.redirect_escape_iframe', ['redirect' => carter_auth_url()]);
+            return view('carter::shopify.redirect_escape_iframe', [
+                'redirect' => carter_auth_url(route('shopify.login'))
+            ]);
         }
 
         return $next($request);
