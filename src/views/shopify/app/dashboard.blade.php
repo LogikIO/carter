@@ -1,7 +1,7 @@
 @extends('carter::shopify.embedded')
 
 @section('content')
-    <link href="https://fonts.googleapis.com/css?family=Arimo:100,500" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
     <style>
         html, body {
             height: 100%;
