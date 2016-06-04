@@ -38,7 +38,7 @@ return [
         'routes' => [
             'signup' => [
                 'uri'    => 'signup',
-                'action' => '\Woolf\Carter\Http\Controllers\ShopifyController@registerStore'
+                'action' => '\Woolf\Carter\Http\Controllers\ShopifyController@signupForm'
             ],
 
             'install' => [

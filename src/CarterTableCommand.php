@@ -22,11 +22,9 @@ class CarterTableCommand extends Command
 
     protected function getMigrationPath()
     {
-        $name = 'add_carter_columns';
+        $migrationCreator = $this->laravel['migration.creator'];
 
-        $path = $this->laravel['path.database'] . '/migrations';
-
-        return $this->laravel['migration.creator']->create($name, $path);
+        return $migrationCreator->create('add_carter_columns', "{$this->laravel['path.database']}/migrations");
     }
 
     protected function getMigrationStub()

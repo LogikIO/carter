@@ -11,8 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
 use Shopify;
-use Woolf\Carter\Http\Middleware\RedirectIfLoggedIn;
-use Woolf\Carter\Http\Middleware\RedirectToLogin;
+use Woolf\Carter\Http\Middleware\RedirectIfAuthenticated;
+use Woolf\Carter\Http\Middleware\Authenticate;
 use Woolf\Carter\Http\Middleware\RequestHasShopDomain;
 use Woolf\Carter\Http\Middleware\VerifyChargeAccepted;
 use Woolf\Carter\Http\Middleware\VerifySignature;
@@ -33,48 +33,19 @@ class ShopifyController extends Controller
 
     public function __construct()
     {
-        $this->middleware(RequestHasShopDomain::class, [
-            'only' => ['install']
-        ]);
-
-        $this->middleware(VerifyState::class, [
-            'only' => ['register']
-        ]);
-
-        $this->middleware(VerifySignature::class, [
-            'only' => ['register', 'login']
-        ]);
-
-        $this->middleware(RedirectIfLoggedIn::class, [
-            'only' => ['install', 'registerStore', 'register', 'login']
-        ]);
-
-        $this->middleware(RedirectToLogin::class, [
-            'only' => ['dashboard']
-        ]);
-
-        $this->middleware(VerifyChargeAccepted::class, [
-            'only' => ['dashboard']
-        ]);
+        $this->middleware([Authenticate::class, VerifyChargeAccepted::class], ['only' => ['dashboard']]);
     }
 
-    public function install(Request $request, OAuth $oauth)
+    public function install(Request $request)
     {
         $this->validate($request, $this->installRules, $this->installMessages);
 
         session(['state' => Str::random(40)]);
 
-        $url = $oauth->authorizationUrl(
-            config('carter.shopify.client_id'),
-            implode(',', config('carter.shopify.scopes')),
-            route('shopify.register'),
-            session('state')
-        );
-
-        return redirect($url);
+        return redirect(carter_auth_url(route('shopify.register')));
     }
 
-    public function registerStore()
+    public function signupForm()
     {
         return view('carter::shopify.auth.register');
     }
