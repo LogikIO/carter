@@ -18,9 +18,11 @@ class Authenticate
     public function handle($request, Closure $next)
     {
         if (auth()->guest()) {
-            $redirect = carter_auth_url();
+            if (! $request->get('shop')) {
+                return route('shopify.signup');
+            }
 
-            return view('carter::shopify.redirect_escape_iframe', compact('redirect'));
+            return view('carter::shopify.redirect_escape_iframe', ['redirect' => carter_auth_url()]);
         }
 
         return $next($request);
