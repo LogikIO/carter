@@ -29,7 +29,6 @@ Route::group(['middleware' => 'web'], function ($router) {
         ->name('shopify.login');
 
     $router->get(carter_route('dashboard.uri'), carter_route('dashboard.action'))
-        ->middleware([Authenticate::class, VerifyChargeAccepted::class])
         ->name('shopify.dashboard');
 
 });

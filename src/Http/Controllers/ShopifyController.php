@@ -31,6 +31,11 @@ class ShopifyController extends Controller
 
     protected $installMessages = ['shop.unique' => 'Store has already been registered'];
 
+    public function __construct()
+    {
+        $this->middleware([Authenticate::class, VerifyChargeAccepted::class], ['only' => ['dashboard']]);
+    }
+
     public function install(Request $request)
     {
         $this->validate($request, $this->installRules, $this->installMessages);
