@@ -3,6 +3,14 @@
 namespace NickyWoolf\Carter\Laravel;
 
 use Illuminate\Support\ServiceProvider;
+use NickyWoolf\Carter\Laravel\Middleware\Authenticate;
+use NickyWoolf\Carter\Laravel\Middleware\RedirectIfAuthenticated;
+use NickyWoolf\Carter\Laravel\Middleware\RequestHasChargeId;
+use NickyWoolf\Carter\Laravel\Middleware\RequestHasShopDomain;
+use NickyWoolf\Carter\Laravel\Middleware\RequestHasShopifySignature;
+use NickyWoolf\Carter\Laravel\Middleware\VerifyChargeAccepted;
+use NickyWoolf\Carter\Laravel\Middleware\VerifySignature;
+use NickyWoolf\Carter\Laravel\Middleware\VerifyState;
 use NickyWoolf\Carter\Shopify\Client;
 use NickyWoolf\Carter\Shopify\Domain;
 use NickyWoolf\Carter\Shopify\Signature;
@@ -29,7 +37,7 @@ class CarterServiceProvider extends ServiceProvider
 
     protected function mapRoutes()
     {
-        Route::group(['middleware' => 'web',], function ($router) {
+        Route::group(['middleware' => 'web',], function ($router) use ($middleware) {
             if (file_exists(base_path('routes/carter.php'))) {
                 return require base_path('routes/carter.php');
             }
@@ -40,6 +48,8 @@ class CarterServiceProvider extends ServiceProvider
 
     public function register()
     {
+        $this->registerMiddleware();
+
         $this->app->when(Domain::class)->needs('$domain')->give(function () {
             return $this->domain();
         });
@@ -59,6 +69,24 @@ class CarterServiceProvider extends ServiceProvider
         $this->app->singleton('command.carter.table', function () {
             return $this->tableCommand();
         });
+    }
+
+    protected function registerMiddleware()
+    {
+        $routeMiddleware = [
+            'carter.auth'      => Authenticate::class,
+            'carter.guest'     => RedirectIfAuthenticated::class,
+            'carter.charged'   => RequestHasChargeId::class,
+            'carter.domain'    => RequestHasShopDomain::class,
+            'carter.signed'    => RequestHasShopifySignature::class,
+            'carter.paying'    => VerifyChargeAccepted::class,
+            'carter.signature' => VerifySignature::class,
+            'carter.nonce'     => VerifyState::class,
+        ];
+
+        foreach ($routeMiddleware as $key => $middleware) {
+            Route::middleware($key, $middleware);
+        }
     }
 
     protected function domain()

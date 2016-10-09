@@ -1,6 +1,6 @@
 <?php
 
-namespace Woolf\Carter\Laravel\Middleware;
+namespace NickyWoolf\Carter\Laravel\Middleware;
 
 use Closure;
 use NickyWoolf\Carter\Shopify\Signature;
