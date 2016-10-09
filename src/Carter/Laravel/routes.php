@@ -21,6 +21,8 @@ Route::group(['middleware' => 'web'], function () {
         ->name('shopify.login');
 });
 
-Route::get('shopify/dashboard', 'NickyWoolf\Carter\Laravel\ShopifyController@dashboard')
-    ->middleware(['carter.auth', 'carter.paying'])
-    ->name('shopify.dashboard');
+Route::group(['middleware' => 'carter.web'], function () {
+    Route::get('shopify/dashboard', 'NickyWoolf\Carter\Laravel\ShopifyController@dashboard')
+        ->middleware(['carter.auth', 'carter.paying'])
+        ->name('shopify.dashboard');
+});

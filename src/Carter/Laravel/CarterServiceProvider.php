@@ -105,6 +105,15 @@ class CarterServiceProvider extends ServiceProvider
      */
     protected function registerMiddleware()
     {
+        // App\Http\Kernel 'web' middleware group without VerifyCsrfToken
+        Route::middlewareGroup('carter.web', [
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ]);
+
         $routeMiddleware = [
             'carter.auth'      => Authenticate::class,
             'carter.guest'     => RedirectIfAuthenticated::class,
