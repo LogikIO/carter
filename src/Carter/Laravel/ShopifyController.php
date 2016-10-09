@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
 use NickyWoolf\Carter\Shopify\Api\RecurringApplicationCharge;
-use NickyWoolf\Carter\Shopify\Oauth;
 
 class ShopifyController extends Controller
 {
@@ -20,7 +19,7 @@ class ShopifyController extends Controller
         return view('carter::auth.register');
     }
 
-    public function install(Request $request, Oauth $oauth)
+    public function install(Request $request)
     {
         $this->validate(
             $request,
@@ -30,12 +29,7 @@ class ShopifyController extends Controller
 
         session(['state' => Str::random(40)]);
 
-        $clientId = config('carter.shopify.client_id');
-        $scope = implode(',', config('carter.shopify.scopes'));
-        $redirect = route('shopify.register');
-        $state = session('state');
-
-        return redirect($oauth->authorizationUrl($clientId, $scope, $redirect, $state));
+        return redirect(shopify_auth_url(route('shopify.register')));
     }
 
     public function register(RegisterShopifyUser $shopifyUser)
