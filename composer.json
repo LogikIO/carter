@@ -1,6 +1,12 @@
 {
-  "name": "woolf/carter",
+  "name": "nickywoolf/carter",
   "description": "Shopify Embedded App Jumpstart for Laravel",
+  "authors": [
+        {
+            "name": "Nicky Woolf",
+            "email": "woolfnicky@gmail.com"
+        }
+  ],
   "license": "MIT",
   "homepage": "https://github.com/nickywoolf/carter",
   "autoload": {
