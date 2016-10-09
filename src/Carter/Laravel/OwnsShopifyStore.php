@@ -2,7 +2,7 @@
 
 namespace NickyWoolf\Carter\Laravel;
 
-trait ShopifyCustomer
+trait OwnsShopifyStore
 {
     public function setAccessTokenAttribute($value)
     {
