@@ -1,4 +1,4 @@
-@extends('carter::shopify.stand_alone')
+@extends('carter::stand_alone')
 
 @section('head')
     <link rel="stylesheet" media="screen"

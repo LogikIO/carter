@@ -3,6 +3,7 @@
 namespace NickyWoolf\Carter\Laravel;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use NickyWoolf\Carter\Shopify\Api\Shop;
 use NickyWoolf\Carter\Shopify\Client;
 use NickyWoolf\Carter\Shopify\Oauth;

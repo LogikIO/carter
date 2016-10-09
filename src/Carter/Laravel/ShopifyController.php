@@ -15,6 +15,11 @@ class ShopifyController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    public function signupForm()
+    {
+        return view('carter::auth.register');
+    }
+
     public function install(Request $request, Oauth $oauth)
     {
         $this->validate(
@@ -31,11 +36,6 @@ class ShopifyController extends Controller
         $state = session('state');
 
         return redirect($oauth->authorizationUrl($clientId, $scope, $redirect, $state));
-    }
-
-    public function signupForm()
-    {
-        return view('carter::shopify.auth.register');
     }
 
     public function register(RegisterShopifyUser $shopifyUser)
@@ -70,6 +70,6 @@ class ShopifyController extends Controller
 
     public function dashboard()
     {
-        return view('carter::shopify.app.dashboard', ['user' => auth()->user()]);
+        return view('carter::app.dashboard', ['user' => auth()->user()]);
     }
 }

@@ -1,4 +1,4 @@
-@extends('carter::shopify.embedded')
+@extends('carter::embedded')
 
 @section('content')
     <link href='https://fonts.googleapis.com/css?family=Roboto:100' rel='stylesheet' type='text/css'>

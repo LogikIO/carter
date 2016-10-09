@@ -30,7 +30,7 @@ return [
         'plan'          => [
             'name'       => 'Test Plan',
             'price'      => 0.99,
-            'return_url' => env('APP_URL', 'http://localhost').'/activate',
+            'return_url' => env('APP_URL', 'http://localhost').'/shopify/activate',
             'trial_day'  => 0,
             'test'       => true
         ],
