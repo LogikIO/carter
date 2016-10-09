@@ -18,10 +18,15 @@ use Route;
 
 class CarterServiceProvider extends ServiceProvider
 {
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/routes.php' => base_path('routes/carter.php'),
+            __DIR__.'/routes.php' => $this->routesPath(),
             __DIR__.'/config.php' => config_path('carter.php'),
             __DIR__.'/views'      => resource_path('views/vendor/carter'),
         ]);
@@ -35,17 +40,43 @@ class CarterServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * @return string
+     */
+    protected function routesPath()
+    {
+        return $this->hasRoutesDirectory() ? base_path('routes/carter.php') : app_path('Http/carter.php');
+    }
+
+    /**
+     * @return void
+     */
     protected function mapRoutes()
     {
         Route::group(['middleware' => 'web',], function ($router) {
-            if (file_exists(base_path('routes/carter.php'))) {
+            if ($this->hasRoutesDirectory() && file_exists(base_path('routes/carter.php'))) {
                 return require base_path('routes/carter.php');
+            } elseif (file_exists(app_path('Http/carter.php'))) {
+                return require app_path('Http/carter.php');
             }
 
             require __DIR__.'/routes.php';
         });
     }
 
+    /**
+     * @return bool
+     */
+    protected function hasRoutesDirectory()
+    {
+        return file_exists(base_path('routes/web.php'));
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
     public function register()
     {
         $this->registerMiddleware();
@@ -71,6 +102,9 @@ class CarterServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * @return void
+     */
     protected function registerMiddleware()
     {
         $routeMiddleware = [
@@ -89,21 +123,33 @@ class CarterServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * @return array|\Illuminate\Http\Request|string
+     */
     protected function domain()
     {
         return auth()->check() ? auth()->user()->domain : request('shop');
     }
 
+    /**
+     * @return null|string
+     */
     protected function accessToken()
     {
         return auth()->check() ? auth()->user()->access_token : null;
     }
 
+    /**
+     * @return array
+     */
     protected function request()
     {
         return request()->all();
     }
 
+    /**
+     * @return CarterTableCommand
+     */
     protected function tableCommand()
     {
         return new CarterTableCommand();
