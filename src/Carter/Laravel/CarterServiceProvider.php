@@ -18,6 +18,10 @@ class CarterServiceProvider extends ServiceProvider
             __DIR__.'/views'      => resource_path('views/vendor/carter'),
         ]);
 
+        $this->loadViewsFrom(__DIR__.'/views', 'carter');
+        $this->mergeConfigFrom(__DIR__.'/config.php', 'carter');
+        $this->commands('command.carter.table');
+
         if (! $this->app->routesAreCached()) {
             $this->mapRoutes();
         }
@@ -25,14 +29,12 @@ class CarterServiceProvider extends ServiceProvider
 
     protected function mapRoutes()
     {
-        if (! file_exists(base_path('routes/carter.php'))) {
-            return;
-        }
+        Route::group(['middleware' => 'web',], function ($router) {
+            if (file_exists(base_path('routes/carter.php'))) {
+                return require base_path('routes/carter.php');
+            }
 
-        Route::group([
-            'middleware' => 'web',
-        ], function ($router) {
-            require base_path('routes/carter.php');
+            require __DIR__.'/routes.php';
         });
     }
 
@@ -49,6 +51,14 @@ class CarterServiceProvider extends ServiceProvider
         $this->app->when(Signature::class)->needs('$request')->give(function () {
             return $this->request();
         });
+
+        $this->app->bind('carter.user', function ($app) {
+            return app(app('config')->get('auth.providers.users.model'));
+        });
+
+        $this->app->singleton('command.carter.table', function () {
+            return $this->tableCommand();
+        });
     }
 
     protected function domain()
@@ -64,5 +74,10 @@ class CarterServiceProvider extends ServiceProvider
     protected function request()
     {
         return request()->all();
+    }
+
+    protected function tableCommand()
+    {
+        return new CarterTableCommand();
     }
 }
