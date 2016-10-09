@@ -50,7 +50,7 @@ class ShopifyController extends Controller
             auth()->user()->update(['charge_id' => $id]);
         }
 
-        return redirect($charge->endpoint('admin/apps'));
+        return redirect($charge->endpoint('apps'));
     }
 
     public function login(Request $request)
