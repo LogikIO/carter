@@ -53,6 +53,13 @@ class ShopifyController extends Controller
         return redirect($charge->endpoint('apps'));
     }
 
+    public function loginRedirect()
+    {
+        return view('carter::redirect_escape_iframe', [
+            'redirect' => shopify_auth_url(route('shopify.login'))
+        ]);
+    }
+
     public function login(Request $request)
     {
         $user = app('carter.user')->whereDomain($request->get('shop'))->first();

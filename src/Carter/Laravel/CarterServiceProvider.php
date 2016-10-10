@@ -9,7 +9,7 @@ use NickyWoolf\Carter\Laravel\Middleware\RequestHasChargeId;
 use NickyWoolf\Carter\Laravel\Middleware\RequestHasShopDomain;
 use NickyWoolf\Carter\Laravel\Middleware\RequestHasShopifySignature;
 use NickyWoolf\Carter\Laravel\Middleware\VerifyChargeAccepted;
-use NickyWoolf\Carter\Laravel\Middleware\VerifySignature;
+use NickyWoolf\Carter\Laravel\Middleware\VerifyShopifySignature;
 use NickyWoolf\Carter\Laravel\Middleware\VerifyState;
 use NickyWoolf\Carter\Shopify\Client;
 use NickyWoolf\Carter\Shopify\Domain;
@@ -53,13 +53,15 @@ class CarterServiceProvider extends ServiceProvider
      */
     protected function mapRoutes()
     {
-        if ($this->hasRoutesDirectory() && file_exists(base_path('routes/carter.php'))) {
-            return require base_path('routes/carter.php');
-        } elseif (file_exists(app_path('Http/carter.php'))) {
-            return require app_path('Http/carter.php');
-        }
+        Route::group(['middleware' => 'web'], function () {
+            if ($this->hasRoutesDirectory() && file_exists(base_path('routes/carter.php'))) {
+                return require base_path('routes/carter.php');
+            } elseif (file_exists(app_path('Http/carter.php'))) {
+                return require app_path('Http/carter.php');
+            }
 
-        require __DIR__.'/routes.php';
+            require __DIR__.'/routes.php';
+        });
     }
 
     /**
@@ -105,24 +107,14 @@ class CarterServiceProvider extends ServiceProvider
      */
     protected function registerMiddleware()
     {
-        // App\Http\Kernel 'web' middleware group without VerifyCsrfToken
-        Route::middlewareGroup('carter.web', [
-            \App\Http\Middleware\EncryptCookies::class,
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        ]);
-
         $routeMiddleware = [
-            'carter.auth'      => Authenticate::class,
-            'carter.guest'     => RedirectIfAuthenticated::class,
-            'carter.charged'   => RequestHasChargeId::class,
-            'carter.domain'    => RequestHasShopDomain::class,
-            'carter.signed'    => RequestHasShopifySignature::class,
-            'carter.paying'    => VerifyChargeAccepted::class,
-            'carter.signature' => VerifySignature::class,
-            'carter.nonce'     => VerifyState::class,
+            'carter.auth'    => Authenticate::class,
+            'carter.guest'   => RedirectIfAuthenticated::class,
+            'carter.charged' => RequestHasChargeId::class,
+            'carter.domain'  => RequestHasShopDomain::class,
+            'carter.paying'  => VerifyChargeAccepted::class,
+            'carter.signed'  => VerifyShopifySignature::class,
+            'carter.nonce'   => VerifyState::class,
         ];
 
         foreach ($routeMiddleware as $key => $middleware) {

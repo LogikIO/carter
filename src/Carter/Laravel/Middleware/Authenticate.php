@@ -13,9 +13,7 @@ class Authenticate
                 return redirect()->route('shopify.signup');
             }
 
-            return view('carter::redirect_escape_iframe', [
-                'redirect' => shopify_auth_url(route('shopify.login'))
-            ]);
+            return redirect()->route('shopify.login.redirect');
         }
 
         return $next($request);
