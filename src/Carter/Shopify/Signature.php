@@ -23,9 +23,9 @@ class Signature
      * @param string $secret
      * @return bool
      */
-    public function hasValidHmac($hmac, $secret)
+    public function hasValidHmac($secret)
     {
-        return ($hmac === hash_hmac($this->hashingAlgorithm(), $this->message(), $secret));
+        return ($this->request['hmac'] === hash_hmac($this->hashingAlgorithm(), $this->message(), $secret));
     }
 
     /**

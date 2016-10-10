@@ -66,6 +66,7 @@ class ShopifyController extends Controller
 
         auth()->login($user);
 
+        // TODO: Generate and add hmac parameters
         return redirect()->route('shopify.dashboard');
     }
 

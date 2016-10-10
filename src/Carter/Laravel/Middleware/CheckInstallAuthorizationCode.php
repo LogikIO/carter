@@ -24,16 +24,16 @@ class CheckInstallAuthorizationCode
             return redirect()->route('shopify.signup')->withErrors('Invalid request');
         }
 
-        if (! $this->validHmac($request) || ! $this->validHostname()) {
+        if (! $this->validHmac() || ! $this->validHostname()) {
             app()->abort(403, 'Client Error: 403 - Invalid Signature');
         }
 
         return $next($request);
     }
 
-    protected function validHmac($request)
+    protected function validHmac()
     {
-        return $this->signature->hasValidHmac($request->hmac, $this->config->get('carter.shopify.client_secret'));
+        return $this->signature->hasValidHmac($this->config->get('carter.shopify.client_secret'));
     }
 
     protected function validHostname()

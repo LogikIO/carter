@@ -16,17 +16,15 @@ class CheckShopifySignature
 
     public function handle($request, Closure $next)
     {
-        if (! $this->validHmac($request)) {
+        if (! $request->has('hmac') || ! $this->validHmac($request)) {
             app()->abort(403, 'Client Error: 403 - Invalid Signature');
         }
 
         return $next($request);
     }
 
-    protected function validHmac($request)
+    protected function validHmac()
     {
-        $secret = config('carter.shopify.client_secret');
-
-        return $request->has('hmac') && $this->signature->hasValidHmac($request->hmac, $secret);
+        return $this->signature->hasValidHmac(config('carter.shopify.client_secret'));
     }
 }
