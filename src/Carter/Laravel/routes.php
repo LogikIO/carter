@@ -8,7 +8,7 @@ Route::match(['get', 'post'], 'shopify/install', 'NickyWoolf\Carter\Laravel\Shop
     ->name('shopify.install');
 
 Route::get('shopify/register', 'NickyWoolf\Carter\Laravel\ShopifyController@register')
-    ->middleware(['carter.guest', 'carter.domain', 'carter.signed', 'carter.nonce'])
+    ->middleware(['carter.guest', 'carter.domain', 'carter.install', 'carter.nonce'])
     ->name('shopify.register');
 
 Route::get('shopify/activate', 'NickyWoolf\Carter\Laravel\ShopifyController@activate')

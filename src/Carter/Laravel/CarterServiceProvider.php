@@ -4,13 +4,14 @@ namespace NickyWoolf\Carter\Laravel;
 
 use Illuminate\Support\ServiceProvider;
 use NickyWoolf\Carter\Laravel\Middleware\Authenticate;
+use NickyWoolf\Carter\Laravel\Middleware\CheckInstallAuthorizationCode;
 use NickyWoolf\Carter\Laravel\Middleware\RedirectIfAuthenticated;
 use NickyWoolf\Carter\Laravel\Middleware\RequestHasChargeId;
 use NickyWoolf\Carter\Laravel\Middleware\RequestHasShopDomain;
 use NickyWoolf\Carter\Laravel\Middleware\RequestHasShopifySignature;
-use NickyWoolf\Carter\Laravel\Middleware\VerifyChargeAccepted;
-use NickyWoolf\Carter\Laravel\Middleware\VerifyShopifySignature;
-use NickyWoolf\Carter\Laravel\Middleware\VerifyState;
+use NickyWoolf\Carter\Laravel\Middleware\CheckChargeAccepted;
+use NickyWoolf\Carter\Laravel\Middleware\CheckShopifySignature;
+use NickyWoolf\Carter\Laravel\Middleware\CheckNonce;
 use NickyWoolf\Carter\Shopify\Client;
 use NickyWoolf\Carter\Shopify\Domain;
 use NickyWoolf\Carter\Shopify\Signature;
@@ -109,12 +110,13 @@ class CarterServiceProvider extends ServiceProvider
     {
         $routeMiddleware = [
             'carter.auth'    => Authenticate::class,
+            'carter.paying'  => CheckChargeAccepted::class,
+            'carter.install' => CheckInstallAuthorizationCode::clas,
+            'carter.nonce'   => CheckNonce::class,
+            'carter.signed'  => CheckShopifySignature::class,
             'carter.guest'   => RedirectIfAuthenticated::class,
             'carter.charged' => RequestHasChargeId::class,
             'carter.domain'  => RequestHasShopDomain::class,
-            'carter.paying'  => VerifyChargeAccepted::class,
-            'carter.signed'  => VerifyShopifySignature::class,
-            'carter.nonce'   => VerifyState::class,
         ];
 
         foreach ($routeMiddleware as $key => $middleware) {

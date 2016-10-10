@@ -5,7 +5,7 @@ namespace NickyWoolf\Carter\Laravel\Middleware;
 use Closure;
 use NickyWoolf\Carter\Shopify\Signature;
 
-class VerifyState
+class CheckNonce
 {
     protected $signature;
 

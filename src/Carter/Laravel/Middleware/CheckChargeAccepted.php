@@ -5,7 +5,7 @@ namespace NickyWoolf\Carter\Laravel\Middleware;
 use Closure;
 use NickyWoolf\Carter\Shopify\Api\RecurringApplicationCharge;
 
-class VerifyChargeAccepted
+class CheckChargeAccepted
 {
 
     protected $charge;
