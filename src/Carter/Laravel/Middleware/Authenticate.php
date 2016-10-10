@@ -13,7 +13,7 @@ class Authenticate
                 return redirect()->route('shopify.signup');
             }
 
-            return redirect()->route('shopify.login.redirect');
+            return redirect()->route('shopify.login.redirect', $request->all());
         }
 
         return $next($request);

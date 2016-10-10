@@ -25,12 +25,8 @@ class CheckShopifySignature
 
     protected function validHmac($request)
     {
-        if (! $request->has(['hmac', 'code', 'shop'])) {
-            return false;
-        }
-
         $secret = config('carter.shopify.client_secret');
 
-        return $this->signature->hasValidHmac($request->hmac, $secret);
+        return $request->has('hmac') && $this->signature->hasValidHmac($request->hmac, $secret);
     }
 }
