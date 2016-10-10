@@ -12,14 +12,14 @@ class SignatureTest extends PHPUnit_Framework_TestCase
 
         $request = [
             'signature' => 'will-be-removed-during-verification',
-            'hmac'      => 'will-also-be-removed',
+            'hmac'      => $hmac,
             'timestamp' => '1234567890',
             'shop'      => 'foo.bar.myshopify.com'
         ];
 
         $signature = new Signature($request);
 
-        $this->assertTrue($signature->hasValidHmac($hmac, 'client_secret'));
+        $this->assertTrue($signature->hasValidHmac('client_secret'));
     }
 
     /** @test */
@@ -87,5 +87,15 @@ class SignatureTest extends PHPUnit_Framework_TestCase
         $signature = new Signature($request);
 
         $this->assertFalse($signature->hasValidNonce(''));
+    }
+
+    /** @test */
+    function it_can_generate_a_valid_hmac()
+    {
+        $signature = new Signature([]);
+        $hmac = $signature->sign('client_secret');
+        $check= new Signature($hmac);
+
+        $this->assertTrue($check->hasValidHmac('client_secret'));
     }
 }

@@ -19,23 +19,49 @@ class Signature
     }
 
     /**
-     * @param string $hmac
+     * @param $secret
+     * @return array
+     */
+    public function sign($secret)
+    {
+        $request = [
+            'internal' => 'true',
+            'timestamp' => time()
+        ];
+
+        $request['hmac'] = $this->hash($this->message($request), $secret);
+
+        return $request;
+    }
+
+    /**
      * @param string $secret
      * @return bool
      */
     public function hasValidHmac($secret)
     {
-        return ($this->request['hmac'] === hash_hmac($this->hashingAlgorithm(), $this->message(), $secret));
+        return ($this->request['hmac'] === $this->hash($this->message(), $secret));
     }
 
     /**
+     * @param $message
+     * @param $secret
      * @return string
      */
-    protected function message()
+    protected function hash($message, $secret)
+    {
+        return hash_hmac($this->hashingAlgorithm(), $message, $secret);
+    }
+
+    /**
+     * @param null $request
+     * @return string
+     */
+    protected function message($request = null)
     {
         $keysToRemove = ['signature', 'hmac'];
 
-        $parameters = array_diff_key($this->request, array_flip($keysToRemove));
+        $parameters = array_diff_key($request ?: $this->request, array_flip($keysToRemove));
 
         return urldecode(http_build_query($parameters));
     }
