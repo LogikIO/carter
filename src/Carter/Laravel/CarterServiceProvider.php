@@ -111,7 +111,7 @@ class CarterServiceProvider extends ServiceProvider
         $routeMiddleware = [
             'carter.auth'    => Authenticate::class,
             'carter.paying'  => CheckChargeAccepted::class,
-            'carter.install' => CheckInstallAuthorizationCode::clas,
+            'carter.install' => CheckInstallAuthorizationCode::class,
             'carter.nonce'   => CheckNonce::class,
             'carter.signed'  => CheckShopifySignature::class,
             'carter.guest'   => RedirectIfAuthenticated::class,
