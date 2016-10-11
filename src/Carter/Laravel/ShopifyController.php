@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
 use NickyWoolf\Carter\Shopify\Api\RecurringApplicationCharge;
-use NickyWoolf\Carter\Shopify\Signature;
 
 class ShopifyController extends Controller
 {
@@ -61,13 +60,13 @@ class ShopifyController extends Controller
         ]);
     }
 
-    public function login(Request $request, Signature $signature)
+    public function login(Request $request)
     {
         $user = app('carter.user')->whereDomain($request->get('shop'))->first();
 
         auth()->login($user);
 
-        return redirect()->route('shopify.dashboard', $signature->sign(config('carter.shopify.client_secret')));
+        return redirect()->route('shopify.dashboard');
     }
 
     public function dashboard()

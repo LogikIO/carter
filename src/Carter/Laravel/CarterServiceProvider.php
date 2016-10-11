@@ -12,6 +12,7 @@ use NickyWoolf\Carter\Laravel\Middleware\RequestHasShopifySignature;
 use NickyWoolf\Carter\Laravel\Middleware\CheckChargeAccepted;
 use NickyWoolf\Carter\Laravel\Middleware\CheckShopifySignature;
 use NickyWoolf\Carter\Laravel\Middleware\CheckNonce;
+use NickyWoolf\Carter\Laravel\Middleware\SignRedirect;
 use NickyWoolf\Carter\Shopify\Client;
 use NickyWoolf\Carter\Shopify\Domain;
 use NickyWoolf\Carter\Shopify\Signature;
@@ -117,6 +118,7 @@ class CarterServiceProvider extends ServiceProvider
             'carter.guest'   => RedirectIfAuthenticated::class,
             'carter.charged' => RequestHasChargeId::class,
             'carter.domain'  => RequestHasShopDomain::class,
+            'carter.sign'    => SignRedirect::class,
         ];
 
         foreach ($routeMiddleware as $key => $middleware) {

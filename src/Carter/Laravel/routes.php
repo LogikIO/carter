@@ -20,7 +20,7 @@ Route::get('shopify/login', 'NickyWoolf\Carter\Laravel\ShopifyController@login')
     ->name('shopify.login');
 
 Route::get('shopify/login/redirect', 'NickyWoolf\Carter\Laravel\ShopifyController@login')
-    ->middleware(['carter.guest', 'carter.domain', 'carter.signed'])
+    ->middleware(['carter.guest', 'carter.domain', 'carter.signed', 'carter.sign'])
     ->name('shopify.login.redirect');
 
 Route::get('shopify/dashboard', 'NickyWoolf\Carter\Laravel\ShopifyController@dashboard')
