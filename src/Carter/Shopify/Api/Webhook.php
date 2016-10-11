@@ -4,50 +4,50 @@ namespace NickyWoolf\Carter\Shopify\Api;
 
 use NickyWoolf\Carter\Shopify\Resource;
 
-class Product extends Resource
+class Webhook extends Resource
 {
     public function all($query = false)
     {
         return $this->httpGet([
-            'path'    => 'products.json',
+            'path'    => 'webhooks.json',
             'query'   => $query,
-            'extract' => 'products',
+            'extract' => 'webhooks',
         ]);
     }
 
     public function get($id, $query = false)
     {
         return $this->httpGet([
-            'path'    => "products/{$id}.json",
+            'path'    => "webhooks/{$id}.json",
             'query'   => $query,
-            'extract' => 'product',
+            'extract' => 'webhook',
         ]);
     }
 
-    public function count($query = [])
+    public function count($query = false)
     {
         return $this->httpGet([
-            'path'    => 'products/count.json',
+            'path'    => 'webhooks/count.json',
             'query'   => $query,
             'extract' => 'count',
         ]);
     }
 
-    public function create(array $product)
+    public function create(array $webhook)
     {
         return $this->httpPost([
-            'path'    => 'products.json',
-            'options' => ['product' => $product],
-            'extract' => 'product',
+            'path'    => 'webhooks.json',
+            'options' => ['webhook' => $webhook],
+            'extract' => 'webhook',
         ]);
     }
 
-    public function update($id, array $product)
+    public function update($id, array $webhook)
     {
         return $this->httpPut([
-            'path'    => "products/{$id}.json",
-            'options' => ['product' => $product],
-            'extract' => 'product',
+            'path'    => "webhooks/{$id}.json",
+            'options' => ['webhook' => $webhook],
+            'extract' => 'webhook',
         ]);
     }
 
