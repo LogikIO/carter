@@ -6,10 +6,8 @@ use NickyWoolf\Carter\Shopify\Resource;
 
 class Shop extends Resource
 {
-    public function get($fields = [])
+    public function get($query = false)
     {
-        $query = ! empty($fields) ? ['fields' => implode(',', $fields)] : false;
-
         return $this->httpGet([
             'path'    => 'shop.json',
             'query'   => $query,

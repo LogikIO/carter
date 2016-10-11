@@ -6,18 +6,20 @@ use NickyWoolf\Carter\Shopify\Resource;
 
 class Product extends Resource
 {
-    public function all()
+    public function all($query = false)
     {
         return $this->httpGet([
             'path'    => 'products.json',
+            'query'   => $query,
             'extract' => 'products',
         ]);
     }
 
-    public function get($id)
+    public function get($id, $query = false)
     {
         return $this->httpGet([
             'path'    => "products/{$id}.json",
+            'query'   => $query,
             'extract' => 'product',
         ]);
     }

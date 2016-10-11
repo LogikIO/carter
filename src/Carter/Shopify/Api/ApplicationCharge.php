@@ -6,18 +6,20 @@ use NickyWoolf\Carter\Shopify\Resource;
 
 class ApplicationCharge extends Resource
 {
-    public function all()
+    public function all($query = false)
     {
         return $this->httpGet([
             'path'    => 'application_charges.json',
+            'query'   => $query,
             'extract' => 'application_charges',
         ]);
     }
 
-    public function get($id)
+    public function get($id, $query = false)
     {
         return $this->httpGet([
             'path'    => "application_charges/{$id}.json",
+            'query'   => $query,
             'extract' => 'application_charge',
         ]);
     }
