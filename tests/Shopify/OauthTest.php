@@ -1,7 +1,6 @@
 <?php
 
 use NickyWoolf\Carter\Shopify\Client;
-use NickyWoolf\Carter\Shopify\Domain;
 use NickyWoolf\Carter\Shopify\Oauth;
 
 class OauthTest extends TestCase
@@ -9,7 +8,7 @@ class OauthTest extends TestCase
     /** @test */
     function it_returns_the_authorization_url()
     {
-        $oauth = new Oauth(new Domain('shopify-domain'), Mockery::mock(Client::class));
+        $oauth = new Oauth(new Client('shopify-domain'));
 
         $url = implode([
             'https://shopify-domain/admin/oauth/authorize?',

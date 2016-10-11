@@ -2,18 +2,16 @@
 
 namespace NickyWoolf\Carter\Shopify;
 
-use BadMethodCallException;
 use GuzzleHttp\Client as GuzzleClient;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * @method ResponseInterface get($uri, array $options = [])
- * @method ResponseInterface put($uri, array $options = [])
- * @method ResponseInterface post($uri, array $options = [])
- * @method ResponseInterface delete($uri, array $options = [])
- */
 class Client
 {
+    /**
+     * @var string
+     */
+    protected $domain;
+
     /**
      * @var null|string
      */
@@ -22,34 +20,112 @@ class Client
     /**
      * @var null|object
      */
-    protected $http;
+    protected $client;
 
     /**
      * Client constructor.
+     * @param string $domain
      * @param null|string $accessToken
-     * @param null|object $http
+     * @param null|object $client
      */
-    public function __construct($accessToken = null, $http = null)
+    public function __construct($domain, $accessToken = null, $client = null)
     {
+        $this->domain = $domain;
         $this->accessToken = $accessToken;
-        $this->http = $http;
+        $this->client = $client;
     }
 
     /**
-     * @param string $name
-     * @param array $args
-     * @return ResponseInterface
+     * @param $args
+     * @return bool|mixed|ResponseInterface
      */
-    public function __call($name, $args)
+    public function get($args)
     {
-        if (! in_array($name, ['get', 'post', 'put', 'delete'])) {
-            throw new BadMethodCallException("Can't call '{$name}' on this object");
+        $args['verb'] = 'get';
+
+        return $this->http($args);
+    }
+
+    /**
+     * @param $args
+     * @return bool|mixed|ResponseInterface
+     */
+    public function post($args)
+    {
+        $args['verb'] = 'post';
+
+        return $this->http($args);
+    }
+
+    /**
+     * @param $args
+     * @return bool|mixed|ResponseInterface
+     */
+    public function put($args)
+    {
+        $args['verb'] = 'put';
+
+        return $this->http($args);
+    }
+
+    /**
+     * @param $args
+     * @return bool|mixed|ResponseInterface
+     */
+    public function delete($args)
+    {
+        $args['verb'] = 'delete';
+
+        return $this->http($args);
+    }
+
+    /**
+     * @param $args
+     * @return bool|mixed|ResponseInterface
+     */
+    public function http($args)
+    {
+        $query = (isset($args['query']) && $args['query']) ? $args['query'] : false;
+        $endpoint = $this->endpoint($args['path'], $query);
+
+        $options = isset($args['options']) ? $args['options'] : [];
+        $response = $this->client()->{$args['verb']}($endpoint, $this->prepare($options));
+
+        $extract = isset($args['extract']) ? $args['extract'] : false;
+
+        return $this->parse($response, $extract);
+    }
+
+    /**
+     * @param string $path
+     * @param bool $query
+     * @return string
+     */
+    public function endpoint($path, $query = false)
+    {
+        $url = "https://{$this->domain}/admin/".trim($path, '/');
+
+        if (! $query) {
+            return $url;
         }
 
-        $uri = $args[0];
-        $options = isset($args[1]) ? $this->prepare($args[1]) : [];
+        return $url.'?'.urldecode(http_build_query($query, '', '&'));
+    }
 
-        return $this->http()->$name($uri, $options);
+    /**
+     * @param ResponseInterface $response
+     * @param bool $extract
+     * @return bool|mixed|ResponseInterface
+     */
+    public function parse(ResponseInterface $response, $extract = false)
+    {
+        $response = json_decode($response->getBody(), true);
+
+        if (! $extract) {
+            return $response;
+        }
+
+        return isset($response[$extract]) ? $response[$extract] : false;
     }
 
     /**
@@ -62,19 +138,11 @@ class Client
     }
 
     /**
-     * @return null|string
-     */
-    public function getAccessToken()
-    {
-        return $this->accessToken;
-    }
-
-    /**
      * @return object|GuzzleClient
      */
-    public function http()
+    public function client()
     {
-        return $this->http ?: new GuzzleClient($this->tokenHeader());
+        return $this->client ?: new GuzzleClient($this->tokenHeader());
     }
 
     /**
@@ -83,5 +151,13 @@ class Client
     public function tokenHeader()
     {
         return ($token = $this->getAccessToken()) ? ['headers' => ['X-Shopify-Access-Token' => $token]] : [];
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getAccessToken()
+    {
+        return $this->accessToken;
     }
 }

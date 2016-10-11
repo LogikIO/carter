@@ -2,8 +2,15 @@
 
 namespace NickyWoolf\Carter\Shopify;
 
-class Oauth extends Resource
+class Oauth
 {
+    protected $client;
+
+    public function __construct(Client $client)
+    {
+        $this->client = $client;
+    }
+
     /**
      * @param string $clientId
      * @param string $scope
@@ -13,7 +20,7 @@ class Oauth extends Resource
      */
     public function authorizationUrl($clientId, $scope, $redirectUri, $state)
     {
-        return $this->endpoint('oauth/authorize', [
+        return $this->client->endpoint('oauth/authorize', [
             'client_id'    => $clientId,
             'scope'        => $scope,
             'redirect_uri' => $redirectUri,
@@ -29,7 +36,7 @@ class Oauth extends Resource
      */
     public function requestAccessToken($clientId, $clientSecret, $code)
     {
-        return $this->httpPost([
+        return $this->client->post([
             'path'    => 'oauth/access_token',
             'options' => [
                 'client_id'     => $clientId,

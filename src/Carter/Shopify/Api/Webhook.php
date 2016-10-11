@@ -2,13 +2,11 @@
 
 namespace NickyWoolf\Carter\Shopify\Api;
 
-use NickyWoolf\Carter\Shopify\Resource;
-
 class Webhook extends Resource
 {
     public function all($query = false)
     {
-        return $this->httpGet([
+        return $this->client->get([
             'path'    => 'webhooks.json',
             'query'   => $query,
             'extract' => 'webhooks',
@@ -17,7 +15,7 @@ class Webhook extends Resource
 
     public function get($id, $query = false)
     {
-        return $this->httpGet([
+        return $this->client->get([
             'path'    => "webhooks/{$id}.json",
             'query'   => $query,
             'extract' => 'webhook',
@@ -26,7 +24,7 @@ class Webhook extends Resource
 
     public function count($query = false)
     {
-        return $this->httpGet([
+        return $this->client->get([
             'path'    => 'webhooks/count.json',
             'query'   => $query,
             'extract' => 'count',
@@ -35,7 +33,7 @@ class Webhook extends Resource
 
     public function create(array $webhook)
     {
-        return $this->httpPost([
+        return $this->client->post([
             'path'    => 'webhooks.json',
             'options' => ['webhook' => $webhook],
             'extract' => 'webhook',
@@ -44,7 +42,7 @@ class Webhook extends Resource
 
     public function update($id, array $webhook)
     {
-        return $this->httpPut([
+        return $this->client->post([
             'path'    => "webhooks/{$id}.json",
             'options' => ['webhook' => $webhook],
             'extract' => 'webhook',
@@ -53,7 +51,7 @@ class Webhook extends Resource
 
     public function delete($id)
     {
-        return $this->httpDelete([
+        return $this->client->delete([
             'path' => "products/{$id}.json"
         ])->getStatusCode();
     }

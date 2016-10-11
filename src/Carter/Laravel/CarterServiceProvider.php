@@ -83,7 +83,7 @@ class CarterServiceProvider extends ServiceProvider
     {
         $this->registerMiddleware();
 
-        $this->app->when(Domain::class)->needs('$domain')->give(function () {
+        $this->app->when(Client::class)->needs('$domain')->give(function () {
             return $this->domain();
         });
 

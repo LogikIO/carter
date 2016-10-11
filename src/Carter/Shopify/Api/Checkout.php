@@ -2,13 +2,11 @@
 
 namespace NickyWoolf\Carter\Shopify\Api;
 
-use NickyWoolf\Carter\Shopify\Resource;
-
 class Checkout extends Resource
 {
     public function all()
     {
-        return $this->httpGet([
+        return $this->client->get([
             'path'    => 'checkouts.json',
             'extract' => 'checkouts',
         ]);
@@ -16,7 +14,7 @@ class Checkout extends Resource
 
     public function count()
     {
-        return $this->httpGet([
+        return $this->client->get([
             'path'    => 'checkouts/count.json',
             'extract' => 'count',
         ]);

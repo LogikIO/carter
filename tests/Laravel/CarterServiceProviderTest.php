@@ -9,18 +9,6 @@ use NickyWoolf\Carter\Shopify\Signature;
 class CarterServiceProviderTest extends TestCase
 {
     /** @test */
-    function it_can_create_a_shop_domain_object()
-    {
-        $app = new Container();
-        $provider = new CarterServiceProviderStub($app);
-        $provider->register();
-
-        $resource = $app->make(Oauth::class);
-
-        $this->assertEquals('https://foo-bar/admin/oauth', $resource->endpoint('oauth'));
-    }
-
-    /** @test */
     function it_can_give_access_token_to_client()
     {
         $app = new Container();

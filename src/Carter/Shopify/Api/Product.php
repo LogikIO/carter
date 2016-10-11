@@ -2,13 +2,11 @@
 
 namespace NickyWoolf\Carter\Shopify\Api;
 
-use NickyWoolf\Carter\Shopify\Resource;
-
 class Product extends Resource
 {
     public function all($query = false)
     {
-        return $this->httpGet([
+        return $this->client->get([
             'path'    => 'products.json',
             'query'   => $query,
             'extract' => 'products',
@@ -17,7 +15,7 @@ class Product extends Resource
 
     public function get($id, $query = false)
     {
-        return $this->httpGet([
+        return $this->client->get([
             'path'    => "products/{$id}.json",
             'query'   => $query,
             'extract' => 'product',
@@ -26,7 +24,7 @@ class Product extends Resource
 
     public function count($query = [])
     {
-        return $this->httpGet([
+        return $this->client->get([
             'path'    => 'products/count.json',
             'query'   => $query,
             'extract' => 'count',
@@ -35,7 +33,7 @@ class Product extends Resource
 
     public function create(array $product)
     {
-        return $this->httpPost([
+        return $this->client->post([
             'path'    => 'products.json',
             'options' => ['product' => $product],
             'extract' => 'product',
@@ -44,7 +42,7 @@ class Product extends Resource
 
     public function update($id, array $product)
     {
-        return $this->httpPut([
+        return $this->client->put([
             'path'    => "products/{$id}.json",
             'options' => ['product' => $product],
             'extract' => 'product',
@@ -53,7 +51,7 @@ class Product extends Resource
 
     public function delete($id)
     {
-        return $this->httpDelete([
+        return $this->client->delete([
             'path' => "products/{$id}.json"
         ])->getStatusCode();
     }
