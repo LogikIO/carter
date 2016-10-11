@@ -31,7 +31,7 @@ class Signature
 
         $request['hmac'] = $this->hash($this->message($request), $secret);
 
-        return $request;
+        return http_build_query($request, '&');
     }
 
     /**

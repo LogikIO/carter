@@ -92,9 +92,8 @@ class SignatureTest extends PHPUnit_Framework_TestCase
     /** @test */
     function it_can_generate_a_valid_hmac()
     {
-        $signature = new Signature([]);
-        $hmac = $signature->sign('client_secret');
-        $check= new Signature($hmac);
+        parse_str((new Signature([]))->sign('client_secret'), $request);
+        $check= new Signature($request);
 
         $this->assertTrue($check->hasValidHmac('client_secret'));
     }
