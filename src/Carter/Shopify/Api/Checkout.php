@@ -4,7 +4,7 @@ namespace NickyWoolf\Carter\Shopify\Api;
 
 use NickyWoolf\Carter\Shopify\Resource;
 
-class AbandonedCheckout extends Resource
+class Checkout extends Resource
 {
     public function all()
     {
