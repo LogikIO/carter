@@ -16,12 +16,12 @@ trait OwnsShopifyStore
 
     public function install()
     {
-        $this->installed = true;
+        return $this->update(['installed' => true]);
     }
 
     public function uninstall()
     {
-        $this->installed = false;
+        return $this->update(['installed' => false]);
     }
 
     public function setAccessTokenAttribute($value)
