@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
 use NickyWoolf\Carter\Shopify\Api\RecurringApplicationCharge;
+use NickyWoolf\Carter\Shopify\Api\Webhook;
 use NickyWoolf\Carter\Shopify\Client;
 
 class ShopifyController extends Controller
@@ -45,10 +46,20 @@ class ShopifyController extends Controller
     {
         auth()->login($shopifyUser->register());
 
-        $charge = app(RecurringApplicationCharge::class);
-        $plan = config('carter.shopify.plan');
+        // We just got an access token for the user in the register method above.
+        // To get an updated Client object, with the access token injected, we
+        // need to resolve API classes out of the container.
+        app(Webhook::class)->create([
+            'address' => route('shopify.uninstall'),
+            'topic'   => 'app/uninstalled',
+            'format'  => 'json',
+        ]);
 
-        return redirect($charge->create($plan)['confirmation_url']);
+        $charge = app(RecurringApplicationCharge::class);
+
+        $plan = $charge->create(config('carter.shopify.plan'));
+
+        return redirect($plan['confirmation_url']);
     }
 
     /*
