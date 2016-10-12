@@ -1,28 +1,32 @@
 {
-  "name": "woolf/carter",
-  "description": "Shopify app jumpstart for Laravel",
+  "name": "nickywoolf/carter",
+  "description": "Shopify Embedded App Jumpstart for Laravel",
+  "authors": [
+        {
+            "name": "Nicky Woolf",
+            "email": "woolfnicky@gmail.com"
+        }
+  ],
   "license": "MIT",
   "homepage": "https://github.com/nickywoolf/carter",
   "autoload": {
     "psr-4": {
-      "Woolf\\Carter\\": "src/"
+      "NickyWoolf\\Carter\\": "src/Carter"
     },
+    "classmap": [
+      "tests/TestCase.php"
+    ],
     "files": [
-      "src/helpers.php"
+      "src/Carter/Laravel/helpers.php"
     ]
   },
   "require": {
     "php": ">=5.5.9",
-    "woolf/shophpify": "1.1.*"
+    "guzzlehttp/guzzle": "^6.2"
   },
   "require-dev": {
-    "laravel/framework": "5.2.*",
     "phpunit/phpunit": "4.*",
-    "mockery/mockery": "^0.9.4"
-  },
-  "autoload-dev": {
-    "classmap": [
-      "tests/TestCase.php"
-    ]
+    "mockery/mockery": "^0.9.4",
+    "laravel/framework": "^5.3"
   }
 }
