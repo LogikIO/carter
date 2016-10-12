@@ -4,14 +4,9 @@ namespace NickyWoolf\Carter\Laravel;
 
 trait OwnsShopifyStore
 {
-    public function setAccessTokenAttribute($value)
+    public function shopOwner($shop)
     {
-        $this->attributes['access_token'] = encrypt($value);
-    }
-
-    public function getAccessTokenAttribute()
-    {
-        return decrypt($this->attributes['access_token']);
+        return static::whereDomain($shop)->first();
     }
 
     public function isActive()
@@ -27,5 +22,15 @@ trait OwnsShopifyStore
     public function uninstall()
     {
         $this->installed = false;
+    }
+
+    public function setAccessTokenAttribute($value)
+    {
+        $this->attributes['access_token'] = encrypt($value);
+    }
+
+    public function getAccessTokenAttribute()
+    {
+        return decrypt($this->attributes['access_token']);
     }
 }

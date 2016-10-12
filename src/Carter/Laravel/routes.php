@@ -26,3 +26,7 @@ Route::get('shopify/login/redirect', 'NickyWoolf\Carter\Laravel\ShopifyControlle
 Route::get('shopify/dashboard', 'NickyWoolf\Carter\Laravel\ShopifyController@dashboard')
     ->middleware(['carter.signed', 'carter.auth', 'carter.paying'])
     ->name('shopify.dashboard');
+
+Route::get('shopify/uninstall', 'NickyWoolf\Carter\Laravel\ShopifyController@uninstall')
+    ->middleware(['carter.signed'])
+    ->name('shopify.uninstall');

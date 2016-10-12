@@ -62,7 +62,7 @@ class ShopifyController extends Controller
 
     public function login(Request $request)
     {
-        $user = app('carter.user')->whereDomain($request->get('shop'))->first();
+        $user = app('carter.user')->shopOwner($request->shop);
 
         auth()->login($user);
 
@@ -72,5 +72,10 @@ class ShopifyController extends Controller
     public function dashboard()
     {
         return view('carter::app.dashboard', ['user' => auth()->user()]);
+    }
+
+    public function uninstall(Request $request)
+    {
+        app('carter.user')->shopOwner($request->shop)->uninstall();
     }
 }
