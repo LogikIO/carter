@@ -16,9 +16,11 @@ class CheckWebhookSignature
 
     public function handle($request, Closure $next)
     {
-        $this->signature->setHmacHeader($request->header($this->signature->hmacHeader()));
+        $header = $request->header('X-Shopify-Hmac-SHA256');
+        $data = file_get_contents('php://input');
+        $secret = config('carter.shopify.client_secret');
 
-        if (! $this->signature->hasValidHmac(config('carter.shopify.client_secret'))) {
+        if (! $this->signature->hasValidWebhookHmac($header, $data, $secret)) {
             app()->abort(403, 'Client Error: 403 - Invalid Signature');
         }
 
