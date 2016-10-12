@@ -85,15 +85,23 @@ class Client
      */
     public function http($args)
     {
-        $query = (isset($args['query']) && $args['query']) ? $args['query'] : false;
-        $endpoint = $this->endpoint($args['path'], $query);
+        $endpoint = $this->endpoint($args['path'], $this->pluck('query', $args));
+        $options = $this->prepare($this->pluck('options', $args, []));
 
-        $options = isset($args['options']) ? $args['options'] : [];
-        $response = $this->client()->{$args['verb']}($endpoint, $this->prepare($options));
+        $response = $this->client()->{$args['verb']}($endpoint, $options);
 
-        $extract = isset($args['extract']) ? $args['extract'] : false;
+        return $this->parse($response, $this->pluck('extract', $args));
+    }
 
-        return $this->parse($response, $extract);
+    /**
+     * @param $key
+     * @param $items
+     * @param mixed $default
+     * @return mixed
+     */
+    protected function pluck($key, $items, $default = false)
+    {
+        return (isset($items[$key])) ? $items[$key] : $default;
     }
 
     /**
