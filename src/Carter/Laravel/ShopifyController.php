@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
 use NickyWoolf\Carter\Shopify\Api\RecurringApplicationCharge;
+use NickyWoolf\Carter\Shopify\Client;
 
 class ShopifyController extends Controller
 {
@@ -50,7 +51,7 @@ class ShopifyController extends Controller
             auth()->user()->update(['charge_id' => $id]);
         }
 
-        return redirect($charge->endpoint('apps'));
+        return redirect(app(Client::class)->endpoint('apps'));
     }
 
     public function loginRedirect()
