@@ -56,15 +56,13 @@ class CarterServiceProvider extends ServiceProvider
      */
     protected function mapRoutes()
     {
-        Route::group(['middleware' => 'web'], function () {
-            if ($this->hasRoutesDirectory() && file_exists(base_path('routes/carter.php'))) {
-                return require base_path('routes/carter.php');
-            } elseif (file_exists(app_path('Http/carter.php'))) {
-                return require app_path('Http/carter.php');
-            }
+        if ($this->hasRoutesDirectory() && file_exists(base_path('routes/carter.php'))) {
+            return require base_path('routes/carter.php');
+        } elseif (file_exists(app_path('Http/carter.php'))) {
+            return require app_path('Http/carter.php');
+        }
 
-            require __DIR__.'/routes.php';
-        });
+        require __DIR__.'/routes.php';
     }
 
     /**
