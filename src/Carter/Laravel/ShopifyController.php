@@ -42,7 +42,7 @@ class ShopifyController extends Controller
         return redirect($charge['confirmation_url']);
     }
 
-    public function activate(Request $request, RecurringApplicationCharge $charge)
+    public function activate(Request $request, RecurringApplicationCharge $charge, Client $client)
     {
         $id = $request->get('charge_id');
 
@@ -51,7 +51,7 @@ class ShopifyController extends Controller
             auth()->user()->update(['charge_id' => $id]);
         }
 
-        return redirect(app(Client::class)->endpoint('apps'));
+        return redirect($client->endpoint('apps'));
     }
 
     public function loginRedirect()
