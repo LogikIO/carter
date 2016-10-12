@@ -29,11 +29,11 @@ class RegisterShopifyUser
 
     protected function user($accessToken)
     {
+        $client = app(Client::class, compact('accessToken'));
+
         $fields = ['id', 'name', 'email', 'myshopify_domain'];
 
-        $shop = app(Shop::class, [
-            'client' => new Client($accessToken)
-        ])->get(['fields' => implode(',', $fields)]);
+        $shop = (new Shop($client))->get(['fields' => implode(',', $fields)]);
 
         return [
             'shopify_id'   => $shop['id'],
