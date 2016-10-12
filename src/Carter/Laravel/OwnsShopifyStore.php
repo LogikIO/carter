@@ -13,4 +13,19 @@ trait OwnsShopifyStore
     {
         return decrypt($this->attributes['access_token']);
     }
+
+    public function isActive()
+    {
+        return (bool) $this->installed;
+    }
+
+    public function install()
+    {
+        $this->installed = true;
+    }
+
+    public function uninstall()
+    {
+        $this->installed = false;
+    }
 }
