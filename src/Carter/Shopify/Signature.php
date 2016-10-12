@@ -10,11 +10,6 @@ class Signature
     protected $request;
 
     /**
-     * @var string
-     */
-    protected $hmac;
-
-    /**
      * Signature constructor.
      * @param array $request
      */
@@ -39,20 +34,9 @@ class Signature
         return http_build_query($request, '&');
     }
 
-    /**
-     * @param string $hmac
-     */
-    public function setHmacHeader($hmac)
+    public function hasValidWebhookHmac($header, $data, $secret)
     {
-        $this->hmac = base64_decode($hmac);
-    }
-
-    /**
-     * @return string
-     */
-    public function hmacHeader()
-    {
-        return 'X-Shopify-Hmac-SHA256';
+        return $header === base64_encode($this->hash($data, $secret, true));
     }
 
     /**
@@ -61,19 +45,18 @@ class Signature
      */
     public function hasValidHmac($secret)
     {
-        $hmac = $this->hmac ?: $this->request['hmac'];
-
-        return ($hmac === $this->hash($this->message(), $secret));
+        return $this->request['hmac'] === $this->hash($this->message(), $secret, false);
     }
 
     /**
      * @param $message
      * @param $secret
+     * @param bool $raw
      * @return string
      */
-    protected function hash($message, $secret)
+    protected function hash($message, $secret, $raw = false)
     {
-        return hash_hmac($this->hashingAlgorithm(), $message, $secret);
+        return hash_hmac($this->hashingAlgorithm(), $message, $secret, $raw);
     }
 
     /**
