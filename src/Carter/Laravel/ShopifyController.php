@@ -15,15 +15,20 @@ class ShopifyController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    /*
+     *
+     */
     public function signupForm()
     {
         return view('carter::auth.register');
     }
 
+    /*
+     *
+     */
     public function install(Request $request)
     {
-        $this->validate(
-            $request,
+        $this->validate($request,
             ['shop' => 'required|unique:users,domain|max:255'],
             ['shop.unique' => 'Store has already been registered']
         );
@@ -33,15 +38,22 @@ class ShopifyController extends Controller
         return redirect(shopify_auth_url(route('shopify.register')));
     }
 
+    /*
+     *
+     */
     public function register(RegisterShopifyUser $shopifyUser)
     {
         auth()->login($shopifyUser->register());
 
-        $charge = app(RecurringApplicationCharge::class)->create(config('carter.shopify.plan'));
+        $charge = app(RecurringApplicationCharge::class);
+        $plan = config('carter.shopify.plan');
 
-        return redirect($charge['confirmation_url']);
+        return redirect($charge->create($plan)['confirmation_url']);
     }
 
+    /*
+     *
+     */
     public function activate(Request $request, RecurringApplicationCharge $charge, Client $client)
     {
         $id = $request->get('charge_id');
@@ -54,6 +66,9 @@ class ShopifyController extends Controller
         return redirect($client->endpoint('apps'));
     }
 
+    /*
+     *
+     */
     public function loginRedirect()
     {
         return view('carter::redirect_escape_iframe', [
@@ -61,6 +76,9 @@ class ShopifyController extends Controller
         ]);
     }
 
+    /*
+     *
+     */
     public function login(Request $request)
     {
         $user = app('carter.user')->shopOwner($request->shop);
@@ -70,11 +88,17 @@ class ShopifyController extends Controller
         return redirect()->route('shopify.dashboard');
     }
 
+    /*
+     *
+     */
     public function dashboard()
     {
         return view('carter::app.dashboard', ['user' => auth()->user()]);
     }
 
+    /*
+     *
+     */
     public function uninstall(Request $request)
     {
         app('carter.user')->shopOwner($request->shop)->uninstall();
