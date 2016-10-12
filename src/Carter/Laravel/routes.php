@@ -27,6 +27,6 @@ Route::get('shopify/dashboard', 'NickyWoolf\Carter\Laravel\ShopifyController@das
     ->middleware(['carter.signed', 'carter.auth', 'carter.paying'])
     ->name('shopify.dashboard');
 
-Route::get('shopify/uninstall', 'NickyWoolf\Carter\Laravel\ShopifyController@uninstall')
-    ->middleware(['carter.signed'])
+Route::post('shopify/uninstall', 'NickyWoolf\Carter\Laravel\ShopifyController@uninstall')
+    ->middleware(['carter.webhook'])
     ->name('shopify.uninstall');

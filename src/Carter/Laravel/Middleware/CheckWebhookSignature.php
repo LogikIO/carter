@@ -5,7 +5,7 @@ namespace NickyWoolf\Carter\Laravel\Middleware;
 use Closure;
 use NickyWoolf\Carter\Shopify\Signature;
 
-class CheckShopifySignature
+class CheckWebhookSignature
 {
     protected $signature;
 
@@ -16,15 +16,12 @@ class CheckShopifySignature
 
     public function handle($request, Closure $next)
     {
-        if (! $request->has('hmac') || ! $this->validHmac()) {
+        $this->signature->setHmacHeader($request->header($this->signature->hmacHeader()));
+
+        if (! $this->signature->hasValidHmac(config('carter.shopify.client_secret'))) {
             app()->abort(403, 'Client Error: 403 - Invalid Signature');
         }
 
         return $next($request);
-    }
-
-    protected function validHmac()
-    {
-        return $this->signature->hasValidHmac(config('carter.shopify.client_secret'));
     }
 }

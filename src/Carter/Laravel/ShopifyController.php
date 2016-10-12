@@ -112,6 +112,6 @@ class ShopifyController extends Controller
      */
     public function uninstall(Request $request)
     {
-        app('carter.user')->shopOwner($request->shop)->uninstall();
+        app('carter.user')->shopOwner($request->header('X-Shopify-Shop-Domain'))->uninstall();
     }
 }

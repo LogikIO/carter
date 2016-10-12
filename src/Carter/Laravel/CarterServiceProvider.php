@@ -5,6 +5,7 @@ namespace NickyWoolf\Carter\Laravel;
 use Illuminate\Support\ServiceProvider;
 use NickyWoolf\Carter\Laravel\Middleware\Authenticate;
 use NickyWoolf\Carter\Laravel\Middleware\CheckInstallAuthorizationCode;
+use NickyWoolf\Carter\Laravel\Middleware\CheckWebhookSignature;
 use NickyWoolf\Carter\Laravel\Middleware\RedirectIfAuthenticated;
 use NickyWoolf\Carter\Laravel\Middleware\RequestHasChargeId;
 use NickyWoolf\Carter\Laravel\Middleware\RequestHasShopDomain;
@@ -115,6 +116,7 @@ class CarterServiceProvider extends ServiceProvider
             'carter.install' => CheckInstallAuthorizationCode::class,
             'carter.nonce'   => CheckNonce::class,
             'carter.signed'  => CheckShopifySignature::class,
+            'carter.webhook' => CheckWebhookSignature::class,
             'carter.guest'   => RedirectIfAuthenticated::class,
             'carter.charged' => RequestHasChargeId::class,
             'carter.domain'  => RequestHasShopDomain::class,
