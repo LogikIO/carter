@@ -36,6 +36,23 @@ class SignRedirectTest extends \TestCase
             $response->getTargetUrl()
         );
     }
+
+    /** @test */
+    function it_creates_a_valid_signature()
+    {
+        $redirect = new RedirectResponse('foo/bar?baz=qux');
+        $middleware = new SignRedirect(new Signature(['baz' => 'qux']));
+
+        $response = $middleware->handle($redirect, function ($r) {
+            return $r;
+        });
+
+        list($url, $query) = explode('?', $response->getTargetUrl());
+        parse_str($query, $request);
+        $signature = new Signature($request);
+
+        $this->assertTrue($signature->hasValidHmac(config('carter.shopify.client_secret')));
+    }
 }
 
 function config()

@@ -29,7 +29,7 @@ class Signature
             'timestamp' => time()
         ];
 
-        $request['hmac'] = $this->hash($this->message($request), $secret);
+        $request['hmac'] = $this->hash($this->message(array_merge($this->request, $request)), $secret);
 
         return http_build_query($request, '&');
     }
