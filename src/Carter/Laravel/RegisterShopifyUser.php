@@ -41,6 +41,7 @@ class RegisterShopifyUser
             'email'        => $shop['email'],
             'domain'       => $shop['myshopify_domain'],
             'access_token' => $accessToken,
+            'installed'    => true,
             'password'     => bcrypt(Str::random(20))
         ];
     }
