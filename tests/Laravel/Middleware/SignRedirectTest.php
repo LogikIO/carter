@@ -55,7 +55,8 @@ class SignRedirectTest extends \TestCase
     }
 }
 
-function config()
-{
-    return 'client_secret';
+if (! function_exists('\NickyWoolf\Carter\Laravel\Middleware\config')) {
+    function config($key = 'carter.shopify.client_secret') {
+        return 'client_secret';
+    }
 }
